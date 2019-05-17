@@ -35,10 +35,10 @@ namespace stalky106
 		public readonly bool enable = true;
 
 		[ConfigOption]
-		public readonly int cooldown = 30;
+		public readonly float cooldown = 30;
 
 		[ConfigOption]
-		public readonly int initialCooldown = 120;
+		public readonly float initialCooldown = 120;
 
 		[ConfigOption]
 		// By default, it ignores SCPs, Chaos Insurgents and the TUTORIAL class

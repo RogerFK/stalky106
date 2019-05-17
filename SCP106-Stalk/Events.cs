@@ -22,7 +22,7 @@ namespace stalky106
 		{
 			this.plugin = plugin;
 		}
-		private int currentCd;
+		private float currentCd;
 
 		private IEnumerator<float> PortalAnimation(Scp106PlayerScript auxScp106Component)
 		{
@@ -50,7 +50,7 @@ namespace stalky106
 				}
 				if(ev.Player.TeamRole.Role == Role.SCP_106)
 				{
-					int cdAux = currentCd - PluginManager.Manager.Server.Round.Duration;
+					int cdAux = (int) currentCd - PluginManager.Manager.Server.Round.Duration;
 					if (cdAux > 0)
 					{
 						ev.ReturnMessage = plugin.cooldownmsg.Replace("$time", cdAux.ToString());
@@ -103,10 +103,10 @@ namespace stalky106
 			if(plugin.announceReady) Timing.RunCoroutine(AnnounceCooldown(plugin.initialCooldown));
 		}
 
-		private IEnumerator<float> AnnounceCooldown(int cd)
+		private IEnumerator<float> AnnounceCooldown(float cd)
 		{
 			plugin.Info("Put .stalk on cooldown for " + cd + " seconds.");
-			yield return Timing.WaitForSeconds(cd);
+			yield return cd;
 			plugin.Info("Cooldown for .stalk ended");
 			foreach (Player larry in PluginManager.Manager.Server.GetPlayers(Role.SCP_106))
 			{
