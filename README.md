@@ -1,5 +1,6 @@
 # stalky106
 Ever wondered "how can SCP-106 get closer to its lore?" and wished that they just dissapeared at teslas, to make them easier to lose? Well, this plugin doesn't do that, but instead gets him closer to the lore by giving him the ability to stalk random people by placing a portal at their feet!
+*Idea by ConnorTheCone*
 
 # Command
 
