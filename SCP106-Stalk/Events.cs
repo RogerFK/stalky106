@@ -92,6 +92,8 @@ namespace stalky106
 						if (possibleTargets.Count() < 1)
 						{
 							ev.ReturnMessage = plugin.noTargetsLeft;
+							ev.Player.PersonalClearBroadcasts();
+							ev.Player.PersonalBroadcast(3, plugin.noTargetsLeft, false);
 							return;
 						}
 						RaycastHit raycastHit;
@@ -112,6 +114,7 @@ namespace stalky106
 						{
 							ev.ReturnMessage = plugin.stalkMessage.Replace("$player", victim.Name).Replace("$class", defaultRoleNames[(int)victim.TeamRole.Role]);
 						}
+						ev.Player.PersonalClearBroadcasts();
 						ev.Player.PersonalBroadcast(5, ev.ReturnMessage, false);
 					}
 					else
