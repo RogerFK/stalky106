@@ -5,12 +5,13 @@ using Smod2.API;
 using Smod2.EventHandlers;
 using Smod2.Events;
 using UnityEngine;
-using MEC;
 using ServerMod2.API;
+using System.Threading.Tasks;
+using System;
 
 namespace stalky106
 {
-	internal class EventHandlers : IEventHandlerRoundStart, IEventHandlerCallCommand, IEventHandlerSetRole//, IEventHandlerPlayerHurt
+	internal class EventHandlers : IEventHandlerRoundStart, IEventHandlerCallCommand, IEventHandlerSetRole
 	{
 		// It will ALWAYS ignores spectators and unconnected players.
 		private readonly int[] alwaysIgnore = new int[] { -1, 5, 7 };
@@ -23,22 +24,48 @@ namespace stalky106
 			this.plugin = plugin;
 		}
 		private float currentCd;
+		private void AnnounceCooldown(float cd)
+		{
 
-		private IEnumerator<float> PortalAnimation(Scp106PlayerScript auxScp106Component)
+			plugin.Info("Put .stalk on cooldown for " + cd + " seconds.");
+			var t = Task.Run(async delegate
+			{
+				await Task.Delay(TimeSpan.FromSeconds(cd));
+				foreach (Player larry in PluginManager.Manager.Server.GetPlayers(Role.SCP_106))
+				{
+					larry.PersonalBroadcast(3, plugin.stalkReady, false);
+				}
+				plugin.Info("Cooldown for .stalk ended");
+			});
+
+			//yield return Timing.WaitForSeconds(cd); // This didn't work.
+		}
+
+		private void PortalAnimation(Scp106PlayerScript auxScp106Component)
 		{
 			Animator anim = auxScp106Component.portalPrefab.GetComponent<Animator>();
-			// I don't know what this does but imma include it so it works flawlessly
+			// I don't know what this does but imma include it so it works like like the game does
 			anim.SetBool("activated", false);
-			yield return 1f;
-			auxScp106Component.portalPrefab.transform.position = auxScp106Component.portalPosition;
-			anim.SetBool("activated", true);
+			//yield return Timing.WaitForSeconds(1f);
 
-			if (plugin.autoTp) auxScp106Component.CallCmdUsePortal();
+			var t = Task.Run(async delegate
+			{
+				await Task.Delay(TimeSpan.FromSeconds(1));
+				auxScp106Component.portalPrefab.transform.position = auxScp106Component.portalPosition;
+				anim.SetBool("activated", true);
+				
+				if (plugin.autoTp)
+				{
+					await Task.Delay(TimeSpan.FromSeconds(plugin.autoDelay));
+					auxScp106Component.CallCmdUsePortal();
+				}
+			});
+			
 		}
 		private void MovePortalThingy(Scp106PlayerScript auxScp106Component, Vector3 pos)
 		{
 			auxScp106Component.NetworkportalPosition = pos;
-			Timing.RunCoroutine(PortalAnimation(auxScp106Component));
+			PortalAnimation(auxScp106Component);
 		}
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
@@ -57,32 +84,37 @@ namespace stalky106
 						return;
 					}
 					Scp106PlayerScript auxScp106Component = (ev.Player.GetGameObject() as GameObject).GetComponent<Scp106PlayerScript>();
+					if(!(ev.Player.GetGameObject() as GameObject).GetComponent<FallDamage>().isGrounded)
+					{
+						ev.ReturnMessage = plugin.onGround;
+						return;
+					}
 					if (auxScp106Component != null)
 					{
 						IEnumerable<Player> possibleTargets = PluginManager.Manager.Server.GetPlayers()
 							.Where(p => !plugin.ignoreRoles.Contains((int)p.TeamRole.Role) && !plugin.ignoreTeams.Contains((int)p.TeamRole.Team) && !alwaysIgnore.Contains((int)p.TeamRole.Team));
 						if (possibleTargets.Count() < 1)
 						{
-							ev.ReturnMessage = plugin.notargetsleft;
+							ev.ReturnMessage = plugin.noTargetsLeft;
 							return;
 						}
 						RaycastHit raycastHit;
 						Player victim;
 						do
 						{
-							victim = possibleTargets.ElementAt(Random.Range(0, possibleTargets.Count()));
+							victim = possibleTargets.ElementAt(UnityEngine.Random.Range(0, possibleTargets.Count()));
 							Physics.Raycast(new Ray(victim.GetPosition().ToVector3(), -Vector3.up), out raycastHit, 10f, auxScp106Component.teleportPlacementMask);
 						} while (raycastHit.point.Equals(Vector3.zero));
 						MovePortalThingy(auxScp106Component, raycastHit.point - Vector3.up);
 						currentCd = PluginManager.Manager.Server.Round.Duration + plugin.cooldown;
-						if (plugin.announceReady) Timing.RunCoroutine(AnnounceCooldown(plugin.cooldown));
+						if (plugin.announceReady) AnnounceCooldown(plugin.cooldown);
 						if(plugin.parsedRoleDict.ContainsKey((int)victim.TeamRole.Role))
 						{
-							ev.ReturnMessage = plugin.hauntmessage.Replace("$player", victim.Name).Replace("$class", plugin.parsedRoleDict[(int)victim.TeamRole.Role]);
+							ev.ReturnMessage = plugin.stalkMessage.Replace("$player", victim.Name).Replace("$class", plugin.parsedRoleDict[(int)victim.TeamRole.Role]);
 						}
 						else
 						{
-							ev.ReturnMessage = plugin.hauntmessage.Replace("$player", victim.Name).Replace("$class", defaultRoleNames[(int)victim.TeamRole.Role]);
+							ev.ReturnMessage = plugin.stalkMessage.Replace("$player", victim.Name).Replace("$class", defaultRoleNames[(int)victim.TeamRole.Role]);
 						}
 						ev.Player.PersonalBroadcast(5, ev.ReturnMessage, false);
 					}
@@ -100,17 +132,9 @@ namespace stalky106
 		public void OnRoundStart(RoundStartEvent ev)
 		{
 			currentCd = plugin.initialCooldown;
-			if(plugin.announceReady) Timing.RunCoroutine(AnnounceCooldown(plugin.initialCooldown));
-		}
-
-		private IEnumerator<float> AnnounceCooldown(float cd)
-		{
-			plugin.Info("Put .stalk on cooldown for " + cd + " seconds.");
-			yield return cd;
-			plugin.Info("Cooldown for .stalk ended");
-			foreach (Player larry in PluginManager.Manager.Server.GetPlayers(Role.SCP_106))
+			if(plugin.announceReady)
 			{
-				larry.PersonalBroadcast(8, plugin.stalkready, false);
+				AnnounceCooldown(plugin.initialCooldown);
 			}
 		}
 
@@ -118,27 +142,10 @@ namespace stalky106
 		{
 			if(ev.Role == Role.SCP_106)
 			{
-				ev.Player.PersonalBroadcast(8, plugin.firstbroadcast, false);
-				ev.Player.SendConsoleMessage(plugin.consoleinfo, "white");
+				ev.Player.PersonalBroadcast(8, plugin.firstBroadcast, false);
+				ev.Player.SendConsoleMessage(plugin.consoleInfo, "white");
 			}
 		}
-
-		/*
-		public void OnPlayerHurt(PlayerHurtEvent ev)
-		{
-			Scp106PlayerScript auxScp106Component = (ev.Player.GetGameObject() as GameObject).GetComponent<Scp106PlayerScript>();
-			if (auxScp106Component.goingViaThePortal && !plugin.attackFromPortal) // attack from portal was a bool in case u're dumbo
-			{
-				ev.Damage = 0;
-				Timing.RunCoroutine(TpBack(ev.Player, ev.Player.GetPosition()));
-			}
-		}
-		private IEnumerator<float> TpBack(Player player, Vector pos)
-		{
-			yield return 0.01f;
-			player.Teleport(pos);
-		}
-		*/
 	}
 }
 

@@ -55,33 +55,39 @@ namespace stalky106
 		public readonly bool autoTp = true;
 
 		[ConfigOption]
+		public readonly float autoDelay = 0.2f;
+
+		[ConfigOption]
 		public readonly string[] roleNames = new string[] { "0:SCP-173", "1:Class D", "3:SCP-106", "4:NTF Scientist", "5:SCP-049", "6:Scientist",
 			"8:Chaos Insurgent","9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
 			"16:SCP-939-53", "17:SCP-939-89" };
 
 		[LangOption]
-		public readonly string firstbroadcast = @"In this server, you can stalk people by putting '.stalk' in the console.\nPress ` to open the console.";
+		public readonly string firstBroadcast = @"In this server, you can stalk people by putting '.stalk' in the console.\nPress ` to open the console.";
 
 		[LangOption]
-		public readonly string stalkready = @"<color=#0F0>Your '.stalk' command is ready.</color>";
+		public readonly string stalkReady = @"<color=#0F0>Your '.stalk' command is ready.</color>";
 
 		[LangOption]
-		public readonly string consoleinfo = @"Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore. Additionaly, you can use 'cmdbind g .stalk' (for example) to bind it to a key to not have to open the console every time you do it";
+		public readonly string consoleInfo = @"Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore. Additionaly, you can use 'cmdbind g .stalk' (for example) to bind it to a key to not have to open the console every time you do it";
 
 		[LangOption]
-		public readonly string hauntmessage = @"<i>You will stalk <b>$player</b>, who is a $class</i>";
+		public readonly string stalkMessage = @"<i>You will stalk <b>$player</b>, who is a $class</i>";
 
 		[LangOption]
 		public readonly string notscp106 = "You are not SCP-106!";
 
 		[LangOption]
-		public readonly string notargetsleft = "There's no targets left for you to stalk.";
+		public readonly string noTargetsLeft = "There's no targets left for you to stalk.";
 
 		[LangOption]
 		public readonly string error = "An error ocurred. Send this command again";
 
 		[LangOption]
 		public readonly string cooldownmsg = "You have to wait $time seconds to use this command";
+
+		[LangOption]
+		public readonly string onGround = "You have to be on the ground to use this command.";
 
 		public override void Register()
 		{
