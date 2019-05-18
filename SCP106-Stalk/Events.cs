@@ -19,6 +19,7 @@ namespace stalky106
 			"8:Chaos Insurgent","9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
 			"16:SCP-939-53", "17:SCP-939-89" };
 		private readonly Stalky106 plugin;
+		private Task cdTask, portalTask;
 		public EventHandlers(Stalky106 plugin)
 		{
 			this.plugin = plugin;
@@ -26,9 +27,8 @@ namespace stalky106
 		private float currentCd;
 		private void AnnounceCooldown(float cd)
 		{
-
 			plugin.Info("Put .stalk on cooldown for " + cd + " seconds.");
-			var t = Task.Run(async delegate
+			cdTask = Task.Run(async delegate
 			{
 				await Task.Delay(TimeSpan.FromSeconds(cd));
 				foreach (Player larry in PluginManager.Manager.Server.GetPlayers(Role.SCP_106))
@@ -36,8 +36,8 @@ namespace stalky106
 					larry.PersonalBroadcast(3, plugin.stalkReady, false);
 				}
 				plugin.Info("Cooldown for .stalk ended");
+				cdTask.Dispose();
 			});
-
 			//yield return Timing.WaitForSeconds(cd); // This didn't work.
 		}
 
@@ -48,7 +48,7 @@ namespace stalky106
 			anim.SetBool("activated", false);
 			//yield return Timing.WaitForSeconds(1f);
 
-			var t = Task.Run(async delegate
+			portalTask = Task.Run(async delegate
 			{
 				await Task.Delay(TimeSpan.FromSeconds(1));
 				auxScp106Component.portalPrefab.transform.position = auxScp106Component.portalPosition;
@@ -59,8 +59,8 @@ namespace stalky106
 					await Task.Delay(TimeSpan.FromSeconds(plugin.autoDelay));
 					auxScp106Component.CallCmdUsePortal();
 				}
+				portalTask.Dispose();
 			});
-			
 		}
 		private void MovePortalThingy(Scp106PlayerScript auxScp106Component, Vector3 pos)
 		{
