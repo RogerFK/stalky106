@@ -13,7 +13,7 @@ namespace stalky106
 {
 	internal class EventHandlers : IEventHandlerRoundStart, IEventHandlerCallCommand, IEventHandlerSetRole
 	{
-		// It will ALWAYS ignores spectators and unconnected players.
+		// It will ALWAYS ignore spectators and unconnected players.
 		private readonly int[] alwaysIgnore = new int[] { -1, 5, 7 };
 		public readonly string[] defaultRoleNames = new string[] { "0:SCP-173", "1:Class D", "3:SCP-106", "4:NTF Scientist", "5:SCP-049", "6:Scientist",
 			"8:Chaos Insurgent","9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
@@ -41,8 +41,9 @@ namespace stalky106
 			//yield return Timing.WaitForSeconds(cd); // This didn't work.
 		}
 
-		private void PortalAnimation(Scp106PlayerScript auxScp106Component)
+		private void MovePortalThingy(Scp106PlayerScript auxScp106Component, Vector3 pos)
 		{
+			auxScp106Component.NetworkportalPosition = pos;
 			Animator anim = auxScp106Component.portalPrefab.GetComponent<Animator>();
 			// I don't know what this does but imma include it so it works like like the game does
 			anim.SetBool("activated", false);
@@ -51,9 +52,9 @@ namespace stalky106
 			portalTask = Task.Run(async delegate
 			{
 				await Task.Delay(TimeSpan.FromSeconds(1));
-				auxScp106Component.portalPrefab.transform.position = auxScp106Component.portalPosition;
+				auxScp106Component.portalPrefab.transform.position = pos;
 				anim.SetBool("activated", true);
-				
+
 				if (plugin.autoTp)
 				{
 					await Task.Delay(TimeSpan.FromSeconds(plugin.autoDelay));
@@ -61,11 +62,6 @@ namespace stalky106
 				}
 				portalTask.Dispose();
 			});
-		}
-		private void MovePortalThingy(Scp106PlayerScript auxScp106Component, Vector3 pos)
-		{
-			auxScp106Component.NetworkportalPosition = pos;
-			PortalAnimation(auxScp106Component);
 		}
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
