@@ -13,6 +13,9 @@ The command is `.stalk` and can be bound to a key by putting `cmdbind <key> .sta
 
 This plugin uses the default translation method used since Smod 3.4.0. Feel free to change it in the sm_translations folder that's just below your sm_plugins folder, the file is called stalky.txt. You can change any line and even use the [UnityEngine's Rich Text Formatting](https://docs.unity3d.com/Manual/StyledText.html) 
 
+# Extra info about SCP-106's lore
+
+SCP-106 teleports to the victims he wants, according to its lore. He is also lured by loud sounds, which seem to be an easy victim for him. However, [SCP-106 delays himself 10-15 minutes after the femur breaker](http://www.scp-wiki.net/once-but-not-now), which makes the Femur Braker totally anti-lore. Although this remains completely out of his main idea, the point of this is to make him more friendly, fun and balanced for a multiplayer experience. With that in mind, him teleporting to random players means that it will be kept fair and that targeting one enemy is completely impossible... unless he is the last target alive. Which also made me think that I should have done an extra cooldown, but... uh don't ask me why I didn't do it, really. Will be an implemented feature in the future if I see interest in this plugin. Let me know in Discord by pinging me if you want any feature, or feel free to open an "issue" at the top of this page.
 
 # Configs
 | Config Option | Value Type | Default Value | Description |
