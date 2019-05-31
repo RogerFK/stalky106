@@ -87,8 +87,8 @@ namespace stalky106
 					}
 					if (auxScp106Component != null)
 					{
-						IEnumerable<Player> possibleTargets = PluginManager.Manager.Server.GetPlayers()
-							.Where(p => !plugin.ignoreRoles.Contains((int)p.TeamRole.Role) && !plugin.ignoreTeams.Contains((int)p.TeamRole.Team) && !alwaysIgnore.Contains((int)p.TeamRole.Team));
+						List<Player> possibleTargets = PluginManager.Manager.Server.GetPlayers()
+							.Where(p => !plugin.ignoreRoles.Contains((int)p.TeamRole.Role) && !plugin.ignoreTeams.Contains((int)p.TeamRole.Team) && !alwaysIgnore.Contains((int)p.TeamRole.Team)).ToList();
 						if (possibleTargets.Count() < 1)
 						{
 							ev.ReturnMessage = plugin.noTargetsLeft;
@@ -100,9 +100,11 @@ namespace stalky106
 						Player victim;
 						do
 						{
-							victim = possibleTargets.ElementAt(UnityEngine.Random.Range(0, possibleTargets.Count()));
+							int rng = UnityEngine.Random.Range(0, possibleTargets.Count());
+							victim = possibleTargets.ElementAt(rng);
 							Physics.Raycast(new Ray(victim.GetPosition().ToVector3(), -Vector3.up), out raycastHit, 10f, auxScp106Component.teleportPlacementMask);
-						} while (raycastHit.point.Equals(Vector3.zero));
+							possibleTargets.RemoveAt(rng);
+						} while (raycastHit.point.Equals(Vector3.zero) || Vector.Distance(victim.GetPosition(), new Vector(0, -1998, 0)) > 30f);
 						MovePortalThingy(auxScp106Component, raycastHit.point - Vector3.up);
 						currentCd = PluginManager.Manager.Server.Round.Duration + plugin.cooldown;
 						if (plugin.announceReady) AnnounceCooldown(plugin.cooldown);
