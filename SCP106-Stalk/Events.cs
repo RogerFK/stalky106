@@ -4,6 +4,7 @@ using Smod2;
 using Smod2.API;
 using Smod2.EventHandlers;
 using Smod2.Events;
+using Smod2.Piping;
 using UnityEngine;
 using ServerMod2.API;
 using System.Threading.Tasks;
@@ -20,6 +21,9 @@ namespace stalky106
 			"16:SCP-939-53", "17:SCP-939-89" };
 		private readonly Stalky106 plugin;
 		private Task cdTask, portalTask;
+
+		//[PipeLink("frizzy.scp457", "IsScp457")]
+		//private readonly MethodPipe<bool> isScp457;
 		public EventHandlers(Stalky106 plugin)
 		{
 			this.plugin = plugin;
@@ -71,6 +75,16 @@ namespace stalky106
 				{
 					return;
 				}
+				/*
+				if (isScp457 != null)
+				{
+					if (isScp457.Invoke(ev.Player.PlayerId) == true)
+					{
+						ev.ReturnMessage = "SCP-457 can't use the stalk command!";
+						return;
+					}
+				}
+				*/
 				if(ev.Player.TeamRole.Role == Role.SCP_106)
 				{
 					int cdAux = (int) currentCd - PluginManager.Manager.Server.Round.Duration;
@@ -89,7 +103,7 @@ namespace stalky106
 					{
 						List<Player> possibleTargets = PluginManager.Manager.Server.GetPlayers()
 							.Where(p => !plugin.ignoreRoles.Contains((int)p.TeamRole.Role) && !plugin.ignoreTeams.Contains((int)p.TeamRole.Team) && !alwaysIgnore.Contains((int)p.TeamRole.Team)).ToList();
-						if (possibleTargets.Count() < 1)
+						if (possibleTargets.Count < 1)
 						{
 							ev.ReturnMessage = plugin.noTargetsLeft;
 							ev.Player.PersonalClearBroadcasts();
@@ -100,11 +114,11 @@ namespace stalky106
 						Player victim;
 						do
 						{
-							int rng = UnityEngine.Random.Range(0, possibleTargets.Count());
+							int rng = UnityEngine.Random.Range(0, possibleTargets.Count);
 							victim = possibleTargets.ElementAt(rng);
 							Physics.Raycast(new Ray(victim.GetPosition().ToVector3(), -Vector3.up), out raycastHit, 10f, auxScp106Component.teleportPlacementMask);
 							possibleTargets.RemoveAt(rng);
-						} while (raycastHit.point.Equals(Vector3.zero) || Vector.Distance(victim.GetPosition(), new Vector(0, -1998, 0)) > 30f);
+						} while (raycastHit.point.Equals(Vector3.zero) || Vector.Distance(victim.GetPosition(), new Vector(0, -1998, 0)) > 30f && possibleTargets.Count > 0);
 						MovePortalThingy(auxScp106Component, raycastHit.point - Vector3.up);
 						currentCd = PluginManager.Manager.Server.Round.Duration + plugin.cooldown;
 						if (plugin.announceReady) AnnounceCooldown(plugin.cooldown);
