@@ -117,8 +117,19 @@ namespace stalky106
 							int rng = UnityEngine.Random.Range(0, possibleTargets.Count);
 							victim = possibleTargets.ElementAt(rng);
 							Physics.Raycast(new Ray(victim.GetPosition().ToVector3(), -Vector3.up), out raycastHit, 10f, auxScp106Component.teleportPlacementMask);
+							if (Vector.Distance(victim.GetPosition(), new Vector(0, -1998, 0)) < 30f)
+							{
+								victim = null;
+							}
 							possibleTargets.RemoveAt(rng);
-						} while (raycastHit.point.Equals(Vector3.zero) || Vector.Distance(victim.GetPosition(), new Vector(0, -1998, 0)) > 30f && possibleTargets.Count > 0);
+						} while ((raycastHit.point.Equals(Vector3.zero) && possibleTargets.Count > 0));
+						if(victim == null)
+						{
+							ev.ReturnMessage = plugin.noTargetsLeft;
+							ev.Player.PersonalClearBroadcasts();
+							ev.Player.PersonalBroadcast(3, plugin.noTargetsLeft, false);
+							return;
+						}
 						MovePortalThingy(auxScp106Component, raycastHit.point - Vector3.up);
 						currentCd = PluginManager.Manager.Server.Round.Duration + plugin.cooldown;
 						if (plugin.announceReady) AnnounceCooldown(plugin.cooldown);
