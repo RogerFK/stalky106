@@ -170,7 +170,7 @@ namespace stalky106
 					ev.ReturnMessage = "The pocket command is not enabled in this server!";
 					return;
 				}
-				if (!IsInPocketDimension(ev.Player.GetPosition()))
+				if (IsInPocketDimension(ev.Player.GetPosition()))
 				{
 					ev.ReturnMessage = plugin.alreadyInPocket;
 					ev.Player.PersonalBroadcast(3, plugin.alreadyInPocket, false);
