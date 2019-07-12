@@ -12,18 +12,23 @@ using System;
 
 namespace stalky106
 {
-	internal class EventHandlers : IEventHandlerRoundStart, IEventHandlerCallCommand, IEventHandlerSetRole
+	internal class EventHandlers : IEventHandlerRoundStart, IEventHandlerCallCommand, IEventHandlerSetRole, IEventHandlerPocketDimensionDie, IEventHandlerPocketDimensionEnter, IEventHandlerPlayerHurt
 	{
 		// It will ALWAYS ignore spectators and unconnected players.
 		private readonly int[] alwaysIgnore = new int[] { -1, 5, 7 };
 		public readonly string[] defaultRoleNames = new string[] { "0:SCP-173", "1:Class D", "3:SCP-106", "4:NTF Scientist", "5:SCP-049", "6:Scientist",
-			"8:Chaos Insurgent","9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
+			"8:Chaos Insurgent", "9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
 			"16:SCP-939-53", "17:SCP-939-89" };
 		private readonly Stalky106 plugin;
 		private Task cdTask, portalTask;
+		private static Vector lastPos;
 
-		//[PipeLink("frizzy.scp457", "IsScp457")]
-		//private readonly MethodPipe<bool> isScp457;
+		// Pocket dimension location //
+
+		public readonly static Vector pocketDimension = Vector.Down * 1997f;
+
+		// Pocket dimension location //
+
 		public EventHandlers(Stalky106 plugin)
 		{
 			this.plugin = plugin;
@@ -44,7 +49,6 @@ namespace stalky106
 			});
 			//yield return Timing.WaitForSeconds(cd); // This didn't work.
 		}
-
 		private void MovePortalThingy(Scp106PlayerScript auxScp106Component, Vector3 pos)
 		{
 			auxScp106Component.NetworkportalPosition = pos;
@@ -67,6 +71,10 @@ namespace stalky106
 				portalTask.Dispose();
 			});
 		}
+		private bool IsInPocketDimension(Vector position)
+		{
+			return Vector.Distance(position, pocketDimension) < 50f;
+		}
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
 			if (ev.Command.StartsWith("stalk"))
@@ -75,16 +83,13 @@ namespace stalky106
 				{
 					return;
 				}
-				/*
-				if (isScp457 != null)
+
+				if (!plugin.stalk)
 				{
-					if (isScp457.Invoke(ev.Player.PlayerId) == true)
-					{
-						ev.ReturnMessage = "SCP-457 can't use the stalk command!";
-						return;
-					}
+					ev.ReturnMessage = "Stalk is not enabled in this server!";
+					return;
 				}
-				*/
+
 				if(ev.Player.TeamRole.Role == Role.SCP_106)
 				{
 					int cdAux = (int) currentCd - PluginManager.Manager.Server.Round.Duration;
@@ -154,6 +159,24 @@ namespace stalky106
 					ev.ReturnMessage = plugin.notscp106;
 				}
 			}
+			else if (ev.Command.StartsWith("pocket"))
+			{
+				if (!plugin.enable)
+				{
+					return;
+				}
+
+				if (!plugin.pocket)
+				{
+					ev.ReturnMessage = "The pocket command is not enabled in this server!";
+					return;
+				}
+				if (!IsInPocketDimension(ev.Player.GetPosition()))
+				{
+					lastPos = ev.Player.GetPosition();
+				}
+				ev.Player.Teleport(pocketDimension);
+			}
 		}
 		public void OnRoundStart(RoundStartEvent ev)
 		{
@@ -170,6 +193,54 @@ namespace stalky106
 			{
 				ev.Player.PersonalBroadcast(8, plugin.firstBroadcast, false);
 				ev.Player.SendConsoleMessage(plugin.consoleInfo, "white");
+			}
+		}
+
+		public void OnPocketDimensionDie(PlayerPocketDimensionDieEvent ev)
+		{
+			if (ev.Player.TeamRole.Role == Role.SCP_106)
+			{
+				ev.Die = false;
+				if (lastPos != null)
+				{
+					ev.Player.Teleport(lastPos);
+					lastPos = null;
+				}
+				else
+				{
+					Scp106PlayerScript component = ((GameObject)ev.Player.GetGameObject()).GetComponent<Scp106PlayerScript>();
+					if (component != null)
+					{
+						Vector3 portalPosition = component.portalPosition;
+						if (portalPosition != null)
+						{
+							if (!portalPosition.Equals(Vector3.zero))
+							{
+								ev.Player.Teleport(new Vector(portalPosition.x, portalPosition.y, portalPosition.z));
+							}
+						}
+					}
+					else
+					{
+						ev.Player.Teleport(PluginManager.Manager.Server.Map.GetRandomSpawnPoint(Role.SCP_106));
+					}
+				}
+			}
+		}
+
+		public void OnPocketDimensionEnter(PlayerPocketDimensionEnterEvent ev)
+		{
+			if(IsInPocketDimension(ev.Attacker.GetPosition()))
+			{
+				ev.TargetPosition = ev.LastPosition;
+			}
+		}
+
+		public void OnPlayerHurt(PlayerHurtEvent ev)
+		{
+			if (IsInPocketDimension(ev.Attacker.GetPosition()))
+			{
+				if(!plugin.pocketDamage) ev.Damage = 0;
 			}
 		}
 	}

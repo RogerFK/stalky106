@@ -35,6 +35,15 @@ namespace stalky106
 		public readonly bool enable = true;
 
 		[ConfigOption]
+		public readonly bool stalk = true;
+
+		[ConfigOption]
+		public readonly bool pocket = true;
+
+		[ConfigOption]
+		public readonly bool pocketDamage = false;
+
+		[ConfigOption]
 		public readonly float cooldown = 30;
 
 		[ConfigOption]
@@ -66,10 +75,19 @@ namespace stalky106
 		public readonly string firstBroadcast = @"In this server, you can stalk people by putting '.stalk' in the console.\nPress ` to open the console.";
 
 		[LangOption]
+		public readonly string secondBroadcast = @"You can also write or bind '.pocket' to visit the pocket dimension.";
+
+		[LangOption]
+		public readonly string gettingOut = @"To get out of the Pocket Dimension, use your portal or go through a door to teleport yourself to the default spawn";
+
+		[LangOption]
 		public readonly string stalkReady = @"<color=#0F0>Your '.stalk' command is ready.</color>";
 
 		[LangOption]
 		public readonly string consoleInfo = @"Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore. Additionaly, you can use 'cmdbind g .stalk' (for example) to bind it to a key to not have to open the console every time you do it";
+
+		[LangOption]
+		public readonly string consolePocket = @"Stalky106 enables additional functionality to SCP-106 by giving him the ability to visit the pocket dimension, bringing him closer to the lore. Additionaly, you can use 'cmdbind p .pocket' (for example) to bind it to a key to not have to open the console every time you do it";
 
 		[LangOption]
 		public readonly string stalkMessage = @"<i>You will stalk <b>$player</b>, who is a $class</i>";
