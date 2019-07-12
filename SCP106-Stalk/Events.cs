@@ -238,7 +238,7 @@ namespace stalky106
 
 		public void OnPlayerHurt(PlayerHurtEvent ev)
 		{
-			if (IsInPocketDimension(ev.Attacker.GetPosition()))
+			if (IsInPocketDimension(ev.Attacker.GetPosition()) && ev.Attacker.TeamRole.Role == Role.SCP_106)
 			{
 				if(!plugin.pocketDamage) ev.Damage = 0;
 			}
