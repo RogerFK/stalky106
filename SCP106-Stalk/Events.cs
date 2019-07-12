@@ -70,10 +70,7 @@ namespace stalky106
 				portalTask.Dispose();
 			});
 		}
-		private bool IsInPocketDimension(Vector position)
-		{
-			return Vector.Distance(position, pocketDimension) < 50f;
-		}
+		private bool IsInPocketDimension(Vector position) => Vector.Distance(position, pocketDimension) < 50f;
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
 			if (ev.Command.StartsWith("stalk"))
@@ -170,7 +167,7 @@ namespace stalky106
 					ev.ReturnMessage = "The pocket command is not enabled in this server!";
 					return;
 				}
-				if (!IsInPocketDimension(ev.Player.GetPosition()))
+				if (IsInPocketDimension(ev.Player.GetPosition()))
 				{
 					ev.ReturnMessage = plugin.alreadyInPocket;
 					ev.Player.PersonalBroadcast(3, plugin.alreadyInPocket, false);
