@@ -47,7 +47,6 @@ namespace stalky106
 				plugin.Info("Cooldown for .stalk ended");
 				cdTask.Dispose();
 			});
-			//yield return Timing.WaitForSeconds(cd); // This didn't work.
 		}
 		private void MovePortalThingy(Scp106PlayerScript auxScp106Component, Vector3 pos)
 		{
@@ -173,8 +172,12 @@ namespace stalky106
 				}
 				if (!IsInPocketDimension(ev.Player.GetPosition()))
 				{
-					lastPos = ev.Player.GetPosition();
+					ev.ReturnMessage = plugin.alreadyInPocket;
+					ev.Player.PersonalBroadcast(3, plugin.alreadyInPocket, false);
+					return;
 				}
+				ev.Player.PersonalBroadcast(5, plugin.gettingOut, false);
+				lastPos = ev.Player.GetPosition();
 				ev.Player.Teleport(pocketDimension);
 			}
 		}
@@ -191,8 +194,8 @@ namespace stalky106
 		{
 			if(ev.Role == Role.SCP_106)
 			{
-				ev.Player.PersonalBroadcast(8, plugin.firstBroadcast, false);
-				ev.Player.SendConsoleMessage(plugin.consoleInfo, "white");
+				if (plugin.stalk)  { ev.Player.PersonalBroadcast(7, plugin.firstBroadcast, false);  ev.Player.SendConsoleMessage(plugin.consoleInfo, "white"); }
+				if (plugin.pocket) { ev.Player.PersonalBroadcast(7, plugin.secondBroadcast, false); ev.Player.SendConsoleMessage(plugin.consolePocket, "white"); }
 			}
 		}
 

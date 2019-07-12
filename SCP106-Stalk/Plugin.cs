@@ -90,6 +90,9 @@ namespace stalky106
 		public readonly string consolePocket = @"Stalky106 enables additional functionality to SCP-106 by giving him the ability to visit the pocket dimension, bringing him closer to the lore. Additionaly, you can use 'cmdbind p .pocket' (for example) to bind it to a key to not have to open the console every time you do it";
 
 		[LangOption]
+		public readonly string alreadyInPocket = @"You're already in the Pocket Dimension.";
+
+		[LangOption]
 		public readonly string stalkMessage = @"<i>You will stalk <b>$player</b>, who is a $class</i>";
 
 		[LangOption]
