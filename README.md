@@ -16,11 +16,15 @@ This plugin uses the default translation method used since Smod 3.4.0. Feel free
 # Extra info about SCP-106's lore
 
 SCP-106 teleports to the victims he wants, according to its lore. He is also lured by loud sounds, which seem to be an easy victim for him. However, [SCP-106 delays himself 10-15 minutes after the femur breaker](http://www.scp-wiki.net/once-but-not-now), which makes the Femur Braker totally anti-lore. Although this remains completely out of his main idea, the point of this is to make him more friendly, fun and balanced for a multiplayer experience. With that in mind, him teleporting to random players means that it will be kept fair and that targeting one enemy is completely impossible... unless he is the last target alive. Which also made me think that I should have done an extra cooldown, but... uh don't ask me why I didn't do it, really. Will be an implemented feature in the future if I see interest in this plugin. Let me know in Discord by pinging me if you want any feature, or feel free to open an "issue" at the top of this page.
+Another one, he can get to his own pocket dimensions and go through any exit to get out from it. That means you can either use the portal or just walk through a portal to leave the pocket dimension. This game is really weird so it just teleports you back to the pocket dimension, nobody will care about it but you can really fuck with people while doing it.
 
 # Configs
 | Config Option | Value Type | Default Value | Description |
 |:-----------------------:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------:|
 | stalky_enable | boolean | true | Enables/Disables this plugin |
+| stalky_stalk | boolean | true | Enables/Disables the stalk command |
+| stalky_pocket | boolean | true | Enables/Disables the pocket command |
+| stalky_pocket_damage | boolean | false | Makes SCP-106 hits unable to deal damage while in the pocket dimension. People will still be scared |
 | stalky_cooldown | int | 30 | The time SCP-106's have to wait before stalking another player |
 | stalky_initial_cooldown | int | 120 | The time SCP-106's have to wait before stalking it's first victim |
 | stalky_ignore_teams | int List | 0, 2, 6 | [Teams](https://github.com/Grover-c13/Smod2/wiki/Enum-Lists#team) that the "stalk" command will ignore. (Defaults to SCPs, Chaos and Tutorial teams) |
