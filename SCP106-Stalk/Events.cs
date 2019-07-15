@@ -171,6 +171,7 @@ namespace stalky106
 				if(ev.Player.TeamRole.Role != Role.SCP_106)
 				{
 					ev.ReturnMessage = plugin.notscp106;
+					return;
 				}
 
 				if (IsInPocketDimension(ev.Player.GetPosition()))
