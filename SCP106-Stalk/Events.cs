@@ -167,6 +167,12 @@ namespace stalky106
 					ev.ReturnMessage = "The pocket command is not enabled in this server!";
 					return;
 				}
+
+				if(ev.Player.TeamRole.Role != Role.SCP_106)
+				{
+					ev.ReturnMessage = plugin.notscp106;
+				}
+
 				if (IsInPocketDimension(ev.Player.GetPosition()))
 				{
 					ev.ReturnMessage = plugin.alreadyInPocket;
