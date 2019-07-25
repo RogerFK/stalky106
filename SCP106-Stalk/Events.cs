@@ -198,8 +198,16 @@ namespace stalky106
 		{
 			if(ev.Role == Role.SCP_106)
 			{
-				if (plugin.stalk)  { ev.Player.PersonalBroadcast(7, plugin.firstBroadcast, false);  ev.Player.SendConsoleMessage(plugin.consoleInfo, "white"); }
-				if (plugin.pocket) { ev.Player.PersonalBroadcast(7, plugin.secondBroadcast, false); ev.Player.SendConsoleMessage(plugin.consolePocket, "white"); }
+				MEC.Timing.RunCoroutine(DelayBroadcasts(ev.Player), 1);
+			}
+		}
+		private IEnumerator<float> DelayBroadcasts(Player player)
+		{
+			yield return MEC.Timing.WaitForSeconds(0.2f);
+			if (player.TeamRole.Role == Role.SCP_106)
+			{
+				if (plugin.stalk) { player.PersonalBroadcast(7, plugin.firstBroadcast, false); player.SendConsoleMessage(plugin.consoleInfo, "white"); }
+				if (plugin.pocket) { player.PersonalBroadcast(7, plugin.secondBroadcast, false); player.SendConsoleMessage(plugin.consolePocket, "white"); }
 			}
 		}
 
