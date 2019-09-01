@@ -3,6 +3,9 @@ Ever wondered "how can SCP-106 get closer to its lore?" and wished that they jus
 
 *Idea by ConnorTheCone and RogerFK*
 
+# Discord
+## Hop on this Discord if you want to get pinged about new releases: https://discord.gg/gS5ae5q
+
 # Command
 
 To use, open up the console, which varies between keyboard layouts, but it's usually the key below the ESC key or else ; (in the Spanish keyboard layout it's ñ, for example)
