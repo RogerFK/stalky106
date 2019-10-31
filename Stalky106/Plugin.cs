@@ -43,7 +43,10 @@ namespace stalky106
         [ConfigOption]
 		public readonly bool stalk = true;
 
-		[ConfigOption]
+        [ConfigOption]
+        public readonly int threshold = 5;
+
+        [ConfigOption]
 		public readonly bool pocket = true;
 
 		[ConfigOption]
@@ -89,14 +92,17 @@ namespace stalky106
 		[LangOption]
 		public readonly string newStalkReady = @"\n<b><color=#ff0955><b>Stalk</b></color> is <color=#00e861>ready</color></b>.\n<size=10>Double-click your portal creating tool to use it.</size>.";
 
-		[LangOption]
+        [LangOption]
+        public readonly string doubleClick = @"\nCreate another portal to <color=#ff0955><b>Stalk</b></color> a random player.";
+
+        [LangOption]
 		public readonly string consolePocket = @"In this server, you can use <b>.pocket</b> to visit the pocket dimension. Additionaly, you can use 'cmdbind p .pocket' (for example) to bind it to a key to not have to open the console every time you want to do it.";
 
 		[LangOption]
 		public readonly string alreadyInPocket = @"\n<color=#B00>You're already in the <b>Pocket Dimension</b>.</color>";
 
 		[LangOption]
-		public readonly string newStalkMessage = @"<i>You will <color=#c9002c><b>stalk</b></color> <b>$player</b>, who is a $class</i>\n<size=10><color=#EEEEEEAA>Cooldown:$cd</color></size>";
+		public readonly string newStalkMessage = @"\n<i>You will <color=#c9002c><b>stalk</b></color> <b>$player</b>, who is a $class</i>\n<size=30><color=#FFFFFF66>Cooldown: $cd</color></size>";
 
 		[LangOption]
 		public readonly string notscp106 = "You are not SCP-106!";
@@ -105,18 +111,18 @@ namespace stalky106
 		public readonly string noTargetsLeft = "No targets found.";
 
 		[LangOption]
-		public readonly string error = "An error ocurred. Send this command again.";
+		public readonly string error = "An error ocurred. Please, try it again.";
 
 		[LangOption]
-		public readonly string cooldownmsg = "\nYou have to wait $time seconds to use <color=#c9002c><b>Stalk</b></color>.";
+		public readonly string cooldownmsg = @"\nYou have to wait $time seconds to use <color=#c9002c><b>Stalk</b></color>.";
 
 		[LangOption]
-		public readonly string onGround = "\nYou have to be on the ground to <color=#c9002c><b>stalk</b></color> people.";
+		public readonly string onGround = @"\nYou have to be on the ground to <color=#c9002c><b>stalk</b></color> people.";
 
 		public override void Register()
 		{
             Instance = this;
-            AddEventHandlers(new EventHandlers(this));
+            AddEventHandlers(new StalkyEvents(this));
             RefreshRoleNames();
 		}
         public static void RefreshRoleNames()

@@ -74,7 +74,7 @@
     <Compile Include="Methods.cs" />
     <Compile Include="Pocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Events.cs" />
+    <Compile Include="StalkyEvents.cs" />
     <Compile Include="Plugin.cs" />
   </ItemGroup>
   <ItemGroup />

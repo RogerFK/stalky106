@@ -11,7 +11,7 @@ using System;
 
 namespace stalky106
 {
-	internal class PocketHandler : IEventHandlerRoundStart, IEventHandlerCallCommand, IEventHandlerSetRole, IEventHandlerPocketDimensionDie,
+	internal class PocketHandler : IEventHandlerCallCommand, IEventHandlerPocketDimensionDie,
         IEventHandlerPocketDimensionEnter, IEventHandlerPlayerHurt
 	{
 		// It will ALWAYS ignore spectators and unconnected players.
@@ -29,7 +29,6 @@ namespace stalky106
 		{
 			this.plugin = plugin;
 		}
-		private float currentCd;
 
 		private bool IsInPocketDimension(Vector position) => Vector.Distance(position, pocketDimension) < 50f;
 		public void OnCallCommand(PlayerCallCommandEvent ev)
@@ -57,14 +56,6 @@ namespace stalky106
 				ev.Player.PersonalBroadcast(5, plugin.gettingOut, false);
                 lastPos = ev.Player.GetPosition();
 				ev.Player.Teleport(pocketDimension);
-			}
-		}
-		public void OnRoundStart(RoundStartEvent ev)
-		{
-			currentCd = plugin.initialCooldown;
-			if(plugin.announceReady)
-			{
-				AnnounceCooldown(plugin.initialCooldown);
 			}
 		}
 
