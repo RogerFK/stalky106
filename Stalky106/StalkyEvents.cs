@@ -19,7 +19,6 @@ namespace stalky106
             "8:Chaos Insurgent", "9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
             "16:SCP-939-53", "17:SCP-939-89" };
         private readonly Stalky106 plugin;
-        private static Vector lastPos;
 
         /// Pocket dimension location (constant) ///
         public readonly static Vector pocketDimension = Vector.Down * 1997f;
@@ -48,44 +47,46 @@ namespace stalky106
         }
 
         private long triggerTick = 0;
+
         public void On106CreatePortal(Player106CreatePortalEvent ev)
         {
-            if (!plugin.enable || !plugin.stalk)
+            if (!plugin.enable || !plugin.stalk || ev.Player.GetGameObject().Equals(PlayerManager.localPlayer))
             {
                 return;
             }
-            ev.Player.PersonalClearBroadcasts();
             // https://tickstodatetime.azurewebsites.net/ taken as reference for ticks.
             // This basically compares the current time to the tick the guy triggered the portal creation tool,
             // and if the difference between his last portal creation (triggerTick) and the current one (DateTime.Now.Ticks)
             // is bigger than the seconds that you set the threshold to, then prompt him and refresh the latest portal creation tick
             long timeDifference = DateTime.Now.Ticks - triggerTick;
+
             if (timeDifference < 2000000) { return; }
+            ev.Player.PersonalClearBroadcasts();
             int cdAux = (int)((currentCd > 0 ? currentCd : 1) - PluginManager.Manager.Server.Round.Duration);
-            if (cdAux > 0)
-            {
-                for(int i = 0; i < 5 && cdAux > i; i++) ev.Player.DelayBroadcast(1, plugin.cooldownmsg.Replace("$time", (cdAux-i).ToString()), false);
-                return;
-            }
             if (timeDifference > 10000000 * plugin.threshold)
             {
                 triggerTick = DateTime.Now.Ticks;
-                ev.Player.DelayBroadcast((uint)plugin.threshold, plugin.doubleClick.Replace("\n", Environment.NewLine), false);
+                if(cdAux > 0) ev.Player.PersonalBroadcast((uint)plugin.threshold, plugin.doubleClick.Replace("\n", Environment.NewLine), false);
             }
             else
             {
-                triggerTick = DateTime.Now.Ticks;
+                if (cdAux > 0)
+                {
+                    triggerTick = DateTime.Now.AddSeconds(Math.Min(5, Math.Max(cdAux - 0.5, 0))).Ticks;
+                    for (int i = 0; i < 5 && cdAux > i; i++) ev.Player.PersonalBroadcast(1, plugin.cooldownmsg.Replace("$time", (cdAux - i).ToString()), false);
+                    return;
+                }
+                triggerTick = DateTime.Now.AddSeconds(10).Ticks;
                 MEC.Timing.RunCoroutine(StalkCoroutine(ev), 0);
             }
         }
         private IEnumerator<float> StalkCoroutine(Player106CreatePortalEvent ev)
         {
             yield return MEC.Timing.WaitForOneFrame;
-            plugin.Info("Enter coroutine");
             Scp106PlayerScript auxScp106Component = (ev.Player.GetGameObject() as GameObject).GetComponent<Scp106PlayerScript>();
             if (!(ev.Player.GetGameObject() as GameObject).GetComponent<FallDamage>().isGrounded)
             {
-                ev.Player.DelayBroadcast(3, plugin.onGround, false);
+                ev.Player.PersonalBroadcast(3, plugin.onGround, false);
                 yield break;
             }
             if (auxScp106Component != null)
@@ -93,8 +94,7 @@ namespace stalky106
                 List<Player> possibleTargets = PluginManager.Manager.Server.GetPlayers(p => !plugin.ignoreRoles.Contains((int)p.TeamRole.Role) && !plugin.ignoreTeams.Contains((int)p.TeamRole.Team) && !alwaysIgnore.Contains((int)p.TeamRole.Team));
                 if (possibleTargets.Count < 1)
                 {
-                    ev.Player.PersonalClearBroadcasts();
-                    ev.Player.DelayBroadcast(3, plugin.noTargetsLeft, false);
+                    ev.Player.PersonalBroadcast(3, plugin.noTargetsLeft, false);
                     yield break;
                 }
                 RaycastHit raycastHit;
@@ -114,12 +114,12 @@ namespace stalky106
                 } while ((raycastHit.point.Equals(Vector3.zero) && possibleTargets.Count > 0));
                 if (victim == null)
                 {
-                    ev.Player.DelayBroadcast(3, plugin.noTargetsLeft, false);
+                    ev.Player.PersonalBroadcast(3, plugin.noTargetsLeft, false);
                     yield break;
                 }
                 if (raycastHit.point.Equals(Vector3.zero))
                 {
-                    ev.Player.DelayBroadcast(4, plugin.error, false);
+                    ev.Player.PersonalBroadcast(4, plugin.error, false);
                     yield break;
                 }
                 Methods.MovePortal(auxScp106Component, raycastHit.point - Vector3.up, false);
@@ -134,10 +134,9 @@ namespace stalky106
                 {
                     bcMessage = Stalky106.Instance.newStalkMessage.Replace("$player", victim.Name).Replace("$class", defaultRoleNames[(int)victim.TeamRole.Role]).Replace("$cd", plugin.cooldown.ToString());
                 }
-                ev.Player.DelayBroadcast(5, bcMessage, false);
+                ev.Player.PersonalBroadcast(5, bcMessage, false);
             }
             yield break;
         }
-        // */
     }
 }
