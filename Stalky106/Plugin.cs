@@ -75,12 +75,17 @@ namespace stalky106
 		[ConfigOption]
 		public readonly float autoDelay = 0.05f;
 
-		[ConfigOption]
-		public readonly string[] roleNames = new string[] { "0:SCP-173", "1:Class D", "3:SCP-106", "4:NTF Scientist", "5:SCP-049", "6:Scientist",
-			"8:Chaos Insurgent","9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
-			"16:SCP-939-53", "17:SCP-939-89" };
+        [ConfigOption]
+        public readonly string[] roleNames = new string[] { "0:<color=#F00>SCP-173</color>", "1:<color=#FF8E00>Class D</color>",
+            "3:<color=#F00>SCP-106</color>", "4:<color=#0096FF>NTF Scientist</color>", "5:<color=#F00>SCP-049</color>",
+            "6:<color=#FFFF7CFF>Scientist</color>", "8:<color=#008f1e>Chaos Insurgent</color>",
+            "9:<color=#f00>SCP-096</color>", "10:<color=#f00>Zombie</color>",
+            "11:<color=#0096FF>NTF Lieutenant</color>", "12:<color=#0096FF>NTF Commander</color>", "13:<color=#0096FF>NTF Cadet</color>",
+            "14:Tutorial", "15:<color=#59636f>Facility Guard</color>",
+            "16:<color=#f00>SCP-939-53</color>", "17:<color=#f00>SCP-939-89</color>" };
 
-		[LangOption]
+
+        [LangOption]
 		public readonly string stalkBroadcast = @"<size=80><color=#0020ed><b>Stalk</b></color></size>\nIn this server, you can <color=#0020ed><b>stalk</b></color> humans by double-clicking the portal creation button in the <b>[TAB]</b> menu.";
 
 		[LangOption]

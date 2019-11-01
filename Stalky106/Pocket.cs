@@ -14,11 +14,6 @@ namespace stalky106
 	internal class PocketHandler : IEventHandlerCallCommand, IEventHandlerPocketDimensionDie,
         IEventHandlerPocketDimensionEnter, IEventHandlerPlayerHurt
 	{
-		// It will ALWAYS ignore spectators and unconnected players.
-		private readonly int[] alwaysIgnore = new int[] { -1, 5, 7 };
-		public readonly string[] defaultRoleNames = new string[] { "0:SCP-173", "1:Class D", "3:SCP-106", "4:NTF Scientist", "5:SCP-049", "6:Scientist",
-			"8:Chaos Insurgent", "9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
-			"16:SCP-939-53", "17:SCP-939-89" };
 		private readonly Stalky106 plugin;
 		private static Vector lastPos;
 
@@ -30,7 +25,6 @@ namespace stalky106
 			this.plugin = plugin;
 		}
 
-		private bool IsInPocketDimension(Vector position) => Vector.Distance(position, pocketDimension) < 50f;
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
 			if (ev.Command.StartsWith("pocket"))
@@ -47,7 +41,7 @@ namespace stalky106
 					return;
 				}
 
-				if (IsInPocketDimension(ev.Player.GetPosition()))
+				if (ev.Player.InPocketDimension())
 				{
 					ev.ReturnMessage = plugin.alreadyInPocket;
 					ev.Player.PersonalBroadcast(3, plugin.alreadyInPocket, false);
@@ -55,8 +49,13 @@ namespace stalky106
 				}
 				ev.Player.PersonalBroadcast(5, plugin.gettingOut, false);
                 lastPos = ev.Player.GetPosition();
-				ev.Player.Teleport(pocketDimension);
-			}
+                plugin.Info($"{lastPos.x},{lastPos.y},{lastPos.z}");
+                Scp106PlayerScript s106cmp = ((GameObject)ev.Player.GetGameObject()).GetComponent<Scp106PlayerScript>();
+                RaycastHit raycastHit;
+                Physics.Raycast(new Ray(pocketDimension.ToVector3(), -Vector3.up), out raycastHit, 50f, s106cmp.teleportPlacementMask);
+                Methods.MovePortal(s106cmp, raycastHit.point - Vector3.up, true);
+                ev.ReturnMessage = "I'm on me moms car, broom broom";
+            }
 		}
 
 		public void OnPocketDimensionDie(PlayerPocketDimensionDieEvent ev)
@@ -64,17 +63,25 @@ namespace stalky106
 			if (ev.Player.TeamRole.Role == Role.SCP_106)
 			{
 				ev.Die = false;
-				if (lastPos != null)
+                Scp106PlayerScript s106cmp = ((GameObject)ev.Player.GetGameObject()).GetComponent<Scp106PlayerScript>();
+
+                if (lastPos != null && !lastPos.Equals(Vector.Zero) && s106cmp != null)
 				{
-					ev.Player.Teleport(lastPos);
-					lastPos = null;
+                    // Move the player back
+                    ev.Player.Teleport(pocketDimension);
+
+                    // Spawn a portal in his last position and TP him to that
+                    RaycastHit raycastHit;
+                    plugin.Info($"ahora {lastPos.x},{lastPos.y},{lastPos.z}");
+                    Physics.Raycast(new Ray(lastPos.ToVector3(), -Vector3.up), out raycastHit, 50f, s106cmp.teleportPlacementMask);
+                    plugin.Info($" raycas {raycastHit.point.x},{raycastHit.point.y},{raycastHit.point.z}");
+                    Methods.MovePortal(s106cmp, raycastHit.point - Vector3.up, true);
 				}
 				else
 				{
-					Scp106PlayerScript component = ((GameObject)ev.Player.GetGameObject()).GetComponent<Scp106PlayerScript>();
-					if (component != null)
+					if (s106cmp != null)
 					{
-						Vector3 portalPosition = component.portalPosition;
+						Vector3 portalPosition = s106cmp.portalPosition;
 						if (portalPosition != null)
 						{
 							if (!portalPosition.Equals(Vector3.zero))
@@ -93,7 +100,7 @@ namespace stalky106
 
 		public void OnPocketDimensionEnter(PlayerPocketDimensionEnterEvent ev)
 		{
-			if(IsInPocketDimension(ev.Attacker.GetPosition()))
+			if(ev.Attacker.InPocketDimension())
 			{
 				ev.TargetPosition = ev.LastPosition;
 			}
@@ -101,11 +108,11 @@ namespace stalky106
 
 		public void OnPlayerHurt(PlayerHurtEvent ev)
 		{
-			if (IsInPocketDimension(ev.Attacker.GetPosition()) && ev.Attacker.TeamRole.Role == Role.SCP_106)
+			if (ev.Attacker.InPocketDimension() && ev.Attacker.TeamRole.Role == Role.SCP_106)
 			{
 				if(!plugin.pocketDamage) ev.Damage = 0;
 			}
 		}
-	}
+    }
 }
 

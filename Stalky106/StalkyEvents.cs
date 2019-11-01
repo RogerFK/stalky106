@@ -15,9 +15,14 @@ namespace stalky106
     {
         // It will ALWAYS ignore spectators and unconnected players.
         private readonly int[] alwaysIgnore = new int[] { -1, 5, 7 };
-        public readonly string[] defaultRoleNames = new string[] { "0:SCP-173", "1:Class D", "3:SCP-106", "4:NTF Scientist", "5:SCP-049", "6:Scientist",
-            "8:Chaos Insurgent", "9:SCP-096", "10:Zombie","11:NTF Lieutenant", "12:NTF Commander", "13:NTF Cadet", "14:Tutorial", "15:Facility Guard",
-            "16:SCP-939-53", "17:SCP-939-89" };
+        public readonly string[] defaultRoleNames = new string[]
+        {   "0:<color=#F00>SCP-173</color>", "1:<color=#FF8E00>Class D</color>",
+            "3:<color=#F00>SCP-106</color>", "4:<color=#0096FF>NTF Scientist</color>", "5:<color=#F00>SCP-049</color>",
+            "6:<color=#FFFF7CFF>Scientist</color>", "8:<color=#008f1e>Chaos Insurgent</color>",
+            "9:<color=#f00>SCP-096</color>", "10:<color=#f00>Zombie</color>",
+            "11:<color=#0096FF>NTF Lieutenant</color>", "12:<color=#0096FF>NTF Commander</color>", "13:<color=#0096FF>NTF Cadet</color>",
+            "14:Tutorial", "15:<color=#59636f>Facility Guard</color>",
+            "16:<color=#f00>SCP-939-53</color>", "17:<color=#f00>SCP-939-89</color>" };
         private readonly Stalky106 plugin;
 
         /// Pocket dimension location (constant) ///
@@ -62,11 +67,11 @@ namespace stalky106
 
             if (timeDifference < 2000000) { return; }
             ev.Player.PersonalClearBroadcasts();
-            int cdAux = (int)((currentCd > 0 ? currentCd : 1) - PluginManager.Manager.Server.Round.Duration);
+            int cdAux = (int)(currentCd - PluginManager.Manager.Server.Round.Duration);
             if (timeDifference > 10000000 * plugin.threshold)
             {
                 triggerTick = DateTime.Now.Ticks;
-                if(cdAux > 0) ev.Player.PersonalBroadcast((uint)plugin.threshold, plugin.doubleClick.Replace("\n", Environment.NewLine), false);
+                if(cdAux < 0) ev.Player.PersonalBroadcast((uint)plugin.threshold, plugin.doubleClick.Replace("\n", Environment.NewLine), false);
             }
             else
             {
@@ -76,7 +81,6 @@ namespace stalky106
                     for (int i = 0; i < 5 && cdAux > i; i++) ev.Player.PersonalBroadcast(1, plugin.cooldownmsg.Replace("$time", (cdAux - i).ToString()), false);
                     return;
                 }
-                triggerTick = DateTime.Now.AddSeconds(10).Ticks;
                 MEC.Timing.RunCoroutine(StalkCoroutine(ev), 0);
             }
         }
@@ -100,6 +104,8 @@ namespace stalky106
                 RaycastHit raycastHit;
                 Player victim;
                 int rng;
+                // Before any "error" that might ocurr, register the current time so there's no "fake" cooldown
+                triggerTick = DateTime.Now.Ticks;
                 do
                 {
                     rng = UnityEngine.Random.Range(0, possibleTargets.Count);
@@ -124,6 +130,7 @@ namespace stalky106
                 }
                 Methods.MovePortal(auxScp106Component, raycastHit.point - Vector3.up, false);
                 currentCd = PluginManager.Manager.Server.Round.Duration + plugin.cooldown;
+                triggerTick = DateTime.Now.AddSeconds(10).Ticks;
                 if (plugin.announceReady) Methods.AnnounceCooldown(plugin.cooldown);
                 string bcMessage;
                 if (plugin.parsedRoleDict.ContainsKey((int)victim.TeamRole.Role))

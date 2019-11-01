@@ -33,11 +33,11 @@ namespace stalky106
         private static IEnumerator<float> TeleportOneOhSix(Scp106PlayerScript auxScp106Component)
         {
             yield return MEC.Timing.WaitForSeconds(Stalky106.Instance.autoDelay);
-            FallDamage groundChecker = auxScp106Component.gameObject.GetComponent<FallDamage>();
             do
             {
                 auxScp106Component.CallCmdUsePortal();
-            } while (!groundChecker.isGrounded && !auxScp106Component.goingViaThePortal);
+                yield return 0f;
+            } while (!auxScp106Component.goingViaThePortal);
         }
 		internal static IEnumerator<float> DelayBroadcasts(Player player)
 		{
@@ -73,6 +73,7 @@ namespace stalky106
             yield return MEC.Timing.WaitForSeconds(0.1f);
             player.PersonalBroadcast(time, message, monospaced);
         }
+        internal static bool InPocketDimension(this Player player) => Vector.Distance(player.GetPosition(), PocketHandler.pocketDimension) < 50f;
     }
 }
 
