@@ -14,7 +14,7 @@ namespace stalky106
 
         private static IEnumerator<float> PortalProcedure(Scp106PlayerScript auxScp106Component, Vector3 pos, bool pocket)
         {
-            yield return MEC.Timing.WaitForSeconds(0.2f);
+            yield return 0f; // Wait one frame
             Scp106PlayerScript local106Component = PlayerManager.localPlayer.GetComponent<Scp106PlayerScript>();
             local106Component.NetworkportalPosition = pos;
             Animator anim = local106Component.portalPrefab.GetComponent<Animator>();
@@ -23,20 +23,21 @@ namespace stalky106
             local106Component.portalPrefab.transform.position = pos;
             if (Stalky106.Instance.autoTp || pocket)
             {
-                MEC.Timing.RunCoroutine(TeleportOneOhSix(auxScp106Component), 1);
+                MEC.Timing.RunCoroutine(ForceTeleportLarry(auxScp106Component), 1);
             }
             yield return MEC.Timing.WaitForSeconds(1f);
             anim.SetBool("activated", true);
           
         }
 		
-        private static IEnumerator<float> TeleportOneOhSix(Scp106PlayerScript auxScp106Component)
+        private static IEnumerator<float> ForceTeleportLarry(Scp106PlayerScript auxScp106Component)
         {
             yield return MEC.Timing.WaitForSeconds(Stalky106.Instance.autoDelay);
+            // Try to do the portal sequence every frame
             do
             {
                 auxScp106Component.CallCmdUsePortal();
-                yield return 0f;
+                yield return 0f; // 0f == 1 frame for MEC
             } while (!auxScp106Component.goingViaThePortal);
         }
 		internal static IEnumerator<float> DelayBroadcasts(Player player)

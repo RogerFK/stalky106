@@ -53,10 +53,10 @@ namespace stalky106
 		public readonly bool pocketDamage = false;
 
 		[ConfigOption]
-		public readonly float cooldown = 30;
+		public readonly int cooldown = 30;
 
 		[ConfigOption]
-		public readonly float initialCooldown = 80;
+		public readonly int initialCooldown = 80;
 
 		[ConfigOption]
 		// By default, it ignores SCPs, Chaos Insurgents and the TUTORIAL class

@@ -4,7 +4,6 @@ using Smod2;
 using Smod2.API;
 using Smod2.EventHandlers;
 using Smod2.Events;
-using Smod2.Piping;
 using UnityEngine;
 using ServerMod2.API;
 using System;
@@ -32,7 +31,7 @@ namespace stalky106
         {
             this.plugin = plugin;
         }
-        private float currentCd;
+        private int currentCd;
 
         public void OnRoundStart(RoundStartEvent ev)
         {
@@ -52,6 +51,7 @@ namespace stalky106
         }
 
         private long triggerTick = 0;
+        private long disableFor = 0;
 
         public void On106CreatePortal(Player106CreatePortalEvent ev)
         {
@@ -62,23 +62,34 @@ namespace stalky106
             // https://tickstodatetime.azurewebsites.net/ taken as reference for ticks.
             // This basically compares the current time to the tick the guy triggered the portal creation tool,
             // and if the difference between his last portal creation (triggerTick) and the current one (DateTime.Now.Ticks)
-            // is bigger than the seconds that you set the threshold to, then prompt him and refresh the latest portal creation tick
+            // is bigger than the seconds that you set the threshold to, then prompt him and refresh the latest portal creation tick.
+            // Same goes for the "disableFor" variable, which avoids massive lag and spamming the guy/console with tons of broadcasts
+            
+            if (disableFor > DateTime.Now.Ticks) return;
+            
             long timeDifference = DateTime.Now.Ticks - triggerTick;
 
-            if (timeDifference < 2000000) { return; }
-            ev.Player.PersonalClearBroadcasts();
-            int cdAux = (int)(currentCd - PluginManager.Manager.Server.Round.Duration);
+            if (timeDifference < 2000000) return;
+
+            int cdAux = currentCd - PluginManager.Manager.Server.Round.Duration;
             if (timeDifference > 10000000 * plugin.threshold)
             {
                 triggerTick = DateTime.Now.Ticks;
-                if(cdAux < 0) ev.Player.PersonalBroadcast((uint)plugin.threshold, plugin.doubleClick.Replace("\n", Environment.NewLine), false);
+                if (cdAux < 0)
+                {
+                    ev.Player.PersonalClearBroadcasts();
+                    ev.Player.PersonalBroadcast((uint)plugin.threshold, plugin.doubleClick.Replace("\n", Environment.NewLine), false);
+                }
             }
             else
             {
+                ev.Player.PersonalClearBroadcasts();
                 if (cdAux > 0)
                 {
                     triggerTick = DateTime.Now.AddSeconds(Math.Min(5, Math.Max(cdAux - 0.5, 0))).Ticks;
-                    for (int i = 0; i < 5 && cdAux > i; i++) ev.Player.PersonalBroadcast(1, plugin.cooldownmsg.Replace("$time", (cdAux - i).ToString()), false);
+                    int i = 0;
+                    for (; i < 5 && cdAux > i; i++) ev.Player.PersonalBroadcast(1, plugin.cooldownmsg.Replace("$time", (cdAux - i).ToString()), false);
+                    disableFor = DateTime.Now.AddSeconds(i + 1).Ticks;
                     return;
                 }
                 MEC.Timing.RunCoroutine(StalkCoroutine(ev), 0);
@@ -88,11 +99,6 @@ namespace stalky106
         {
             yield return MEC.Timing.WaitForOneFrame;
             Scp106PlayerScript auxScp106Component = (ev.Player.GetGameObject() as GameObject).GetComponent<Scp106PlayerScript>();
-            if (!(ev.Player.GetGameObject() as GameObject).GetComponent<FallDamage>().isGrounded)
-            {
-                ev.Player.PersonalBroadcast(3, plugin.onGround, false);
-                yield break;
-            }
             if (auxScp106Component != null)
             {
                 List<Player> possibleTargets = PluginManager.Manager.Server.GetPlayers(p => !plugin.ignoreRoles.Contains((int)p.TeamRole.Role) && !plugin.ignoreTeams.Contains((int)p.TeamRole.Team) && !alwaysIgnore.Contains((int)p.TeamRole.Team));
@@ -102,7 +108,7 @@ namespace stalky106
                     yield break;
                 }
                 RaycastHit raycastHit;
-                Player victim;
+                Player victim = null;
                 int rng;
                 // Before any "error" that might ocurr, register the current time so there's no "fake" cooldown
                 triggerTick = DateTime.Now.Ticks;
@@ -115,9 +121,10 @@ namespace stalky106
                     if (Vector.Distance(victim.GetPosition(), new Vector(0, -1998, 0)) < 40f)
                     {
                         victim = null;
+                        raycastHit.point = Vector3.zero;
                     }
                     possibleTargets.RemoveAt(rng);
-                } while ((raycastHit.point.Equals(Vector3.zero) && possibleTargets.Count > 0));
+                } while (raycastHit.point.Equals(Vector3.zero) && possibleTargets.Count > 0);
                 if (victim == null)
                 {
                     ev.Player.PersonalBroadcast(3, plugin.noTargetsLeft, false);
