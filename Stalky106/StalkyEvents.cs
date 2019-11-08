@@ -69,7 +69,7 @@ namespace stalky106
             
             long timeDifference = DateTime.Now.Ticks - triggerTick;
 
-            if (timeDifference < 2000000) return;
+            //if (timeDifference < 2000000) return;
 
             int cdAux = currentCd - PluginManager.Manager.Server.Round.Duration;
             if (timeDifference > 10000000 * plugin.threshold)
@@ -92,6 +92,7 @@ namespace stalky106
                     disableFor = DateTime.Now.AddSeconds(i + 1).Ticks;
                     return;
                 }
+                disableFor = DateTime.Now.AddSeconds(7).Ticks;
                 MEC.Timing.RunCoroutine(StalkCoroutine(ev), 0);
             }
         }
@@ -127,12 +128,12 @@ namespace stalky106
                 } while (raycastHit.point.Equals(Vector3.zero) && possibleTargets.Count > 0);
                 if (victim == null)
                 {
-                    ev.Player.PersonalBroadcast(3, plugin.noTargetsLeft, false);
+                    ev.Player.PersonalBroadcast(5, plugin.noTargetsLeft, false);
                     yield break;
                 }
                 if (raycastHit.point.Equals(Vector3.zero))
                 {
-                    ev.Player.PersonalBroadcast(4, plugin.error, false);
+                    ev.Player.PersonalBroadcast(5, plugin.error, false);
                     yield break;
                 }
                 Methods.MovePortal(auxScp106Component, raycastHit.point - Vector3.up, false);
