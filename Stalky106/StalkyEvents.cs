@@ -69,8 +69,6 @@ namespace stalky106
             
             long timeDifference = DateTime.Now.Ticks - triggerTick;
 
-            //if (timeDifference < 2000000) return;
-
             int cdAux = currentCd - PluginManager.Manager.Server.Round.Duration;
             if (timeDifference > 10000000 * plugin.threshold)
             {
@@ -86,13 +84,13 @@ namespace stalky106
                 ev.Player.PersonalClearBroadcasts();
                 if (cdAux > 0)
                 {
-                    triggerTick = DateTime.Now.AddSeconds(Math.Min(5, Math.Max(cdAux - 0.5, 0))).Ticks;
+                    triggerTick = DateTime.Now.Ticks;
                     int i = 0;
                     for (; i < 5 && cdAux > i; i++) ev.Player.PersonalBroadcast(1, plugin.cooldownmsg.Replace("$time", (cdAux - i).ToString()), false);
                     disableFor = DateTime.Now.AddSeconds(i + 1).Ticks;
                     return;
                 }
-                disableFor = DateTime.Now.AddSeconds(7).Ticks;
+                disableFor = DateTime.Now.AddSeconds(4).Ticks;
                 MEC.Timing.RunCoroutine(StalkCoroutine(ev), 0);
             }
         }

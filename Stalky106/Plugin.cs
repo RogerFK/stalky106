@@ -32,8 +32,7 @@ namespace stalky106
 			this.Info("Prepare to face Larry...");
 		}
 		public Dictionary<int, string> parsedRoleDict = new Dictionary<int, string>();
-
-
+        
         [ConfigOption]
 		public readonly bool enable = true;
 
@@ -106,7 +105,10 @@ namespace stalky106
 		[LangOption]
 		public readonly string alreadyInPocket = @"\n<color=#B00>You're already in the <b>Pocket Dimension</b>.</color>";
 
-		[LangOption]
+        [LangOption]
+        internal string toPocket = @"\nTravelling to the <b><color=#421800>pocket dimension</color></b>...";
+
+        [LangOption]
 		public readonly string newStalkMessage = @"\n<i>You will <color=#0020ed><b>stalk</b></color> <b>$player</b>, who is a $class</i>\n<size=30><color=#FFFFFF66>Cooldown: $cd</color></size>";
 
 		[LangOption]

@@ -54,7 +54,8 @@ namespace stalky106
                 RaycastHit raycastHit;
                 Physics.Raycast(new Ray(pocketDimension.ToVector3(), -Vector3.up), out raycastHit, 50f, s106cmp.teleportPlacementMask);
                 Methods.MovePortal(s106cmp, raycastHit.point - Vector3.up, true);
-                ev.ReturnMessage = "I'm on me moms car, broom broom";
+                ev.ReturnMessage = plugin.toPocket;
+                ev.Player.PersonalBroadcast(5, plugin.toPocket, false);
             }
 		}
 
