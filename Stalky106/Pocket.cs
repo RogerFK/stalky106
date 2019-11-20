@@ -49,7 +49,6 @@ namespace stalky106
 				}
 				ev.Player.PersonalBroadcast(5, plugin.gettingOut, false);
                 lastPos = ev.Player.GetPosition();
-                plugin.Info($"{lastPos.x},{lastPos.y},{lastPos.z}");
                 Scp106PlayerScript s106cmp = ((GameObject)ev.Player.GetGameObject()).GetComponent<Scp106PlayerScript>();
                 RaycastHit raycastHit;
                 Physics.Raycast(new Ray(pocketDimension.ToVector3(), -Vector3.up), out raycastHit, 50f, s106cmp.teleportPlacementMask);

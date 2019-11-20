@@ -13,7 +13,7 @@ namespace stalky106
 		id = "rogerfk.scp106stalk",
 		version = "2.0",
 		SmodMajor = 3,
-		SmodMinor = 5,
+		SmodMinor = 6,
 		SmodRevision = 0,
 		configPrefix = "stalky",
 		langFile = "stalky_phrases"
@@ -157,7 +157,7 @@ namespace stalky106
                     Instance.Error(key + " isn't a valid option for \'stalky_role_names\'.");
                 }
             }
-            Instance.Info("Successfully loaded the configs");
+            Instance.Info("Successfully loaded the configs.");
         }
 	}
 }
