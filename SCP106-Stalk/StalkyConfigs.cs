@@ -7,7 +7,7 @@ namespace stalky106
 {
     internal static class StalkyConfigs
     {
-		private static readonly string translationPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED"), "stalky_translations");
+		private static readonly string translationPath = Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED"), "translations"), "stalky_translations.txt");
 		internal static float cooldownCfg;
 
 		internal static float initialCooldown;

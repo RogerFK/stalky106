@@ -6,18 +6,8 @@ namespace stalky106
 {
 	internal class EventHandlers
 	{
-		private readonly Stalky106 plugin;
-		private static Vector3 lastPos;
-
-		// Pocket dimension location //
-
-		public readonly static Vector3 pocketDimension = Vector3.down * 1997f;
-
-		// Pocket dimension location //
-
-		public EventHandlers(Stalky106 plugin)
+		public EventHandlers()
 		{
-			this.plugin = plugin;
 		}
 
 		internal void OnRoundStart()
