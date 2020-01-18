@@ -1,5 +1,6 @@
 ﻿using EXILED;
 using Harmony;
+using System.Collections.Generic;
 
 namespace stalky106
 {
@@ -10,11 +11,12 @@ namespace stalky106
 		public static int harmonyCounter;
 		public const string Version = "V1.0.0";
 		public bool enabled;
+		public static IEnumerable<MEC.CoroutineHandle> Coroutines { set; get; }
 		public override void OnDisable()
 		{
 			if (!enabled) return;
 			HarmonyInstance.UnpatchAll();
-			MEC.Timing.KillCoroutines("StalkCoroutine");
+			MEC.Timing.KillCoroutines(Coroutines);
 			MEC.Timing.KillCoroutines("PortalProcedure");
 			MEC.Timing.KillCoroutines("StalkyCooldown");
 			MEC.Timing.KillCoroutines("ForceTeleportLarry");
