@@ -7,7 +7,8 @@ namespace stalky106
 {
     internal static class StalkyConfigs
     {
-		private static readonly string translationPath = Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED"), "translations"), "stalky_translations.txt");
+		private static readonly string translationPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED"), "translations");
+		private static readonly string stalkyTranslationPath = Path.Combine(translationPath, "stalky_translations.txt");
 		internal static float cooldownCfg;
 
 		internal static float initialCooldown;
@@ -42,14 +43,14 @@ namespace stalky106
 			cooldownCfg = Plugin.Config.GetFloat("stalky_cooldown", 40f);
 			initialCooldown = Plugin.Config.GetFloat("stalky_initial_cooldown", 80f);
 			ignoreTeams = Plugin.Config.GetIntList("stalky_ignore_teams");
-			if(ignoreTeams == null)
+			if(ignoreTeams == null || ignoreTeams.Count == 0)
 			{
-				ignoreTeams = new List<int> { 0, 2, 6 };
+				ignoreTeams = new List<int>() { (int) Team.SCP, (int) Team.CHI, (int) Team.TUT };
 			}
 			ignoreRoles = Plugin.Config.GetIntList("stalky_ignore_roles");
-			if (ignoreRoles == null)
+			if (ignoreRoles == null || ignoreRoles.Count == 0)
 			{
-				ignoreRoles = new List<int> { 3, 7 };
+				ignoreRoles = new List<int>() { 3, 7 };
 			}
 			announceReady = Plugin.Config.GetBool("stalky_announce_ready", true);
 			autoTp = Plugin.Config.GetBool("stalky_auto_tp", true);
@@ -124,13 +125,17 @@ namespace stalky106
 			}
 			else 
 			{
+				if (!Directory.Exists(translationPath))
+				{
+					Directory.CreateDirectory(translationPath);
+				}
 				// Create and write all the text of the default file contents if the file is not found
-				File.WriteAllText(translationPath, defaultFileContents);
+				File.WriteAllText(stalkyTranslationPath, defaultFileContents);
 			}
 		}
 		#region File Contents
 		private static readonly string defaultFileContents = @"stalkBroadcast: <size=80><color=#0020ed><b>Stalk</b></color></size>\nIn this server, you can <color=#0020ed><b>stalk</b></color> humans by double-clicking the portal creation button in the <b>[TAB]</b> menu." + Environment.NewLine +
-						@"new_stalk_ready: \n<b><color=#0020ed><b>Stalk</b></color> is <color=#00e861>ready</color></b>.\n<size=30>Double-click your portal creating tool to use it.</size>" + Environment.NewLine +
+						@"new_stalk_ready: \n<b><color=#0020ed><b>Stalk</b></color> is <color=#f2245f>ready</color></b>\n<size=30>Double-click your portal creating tool to use it.</size>" + Environment.NewLine +
 						@"double_click: \nClick the portal creation tool again to <color=#ff0955><b>Stalk</b></color> a random player." + Environment.NewLine +
 						@"console_info: Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore." + Environment.NewLine +
 						@"new_stalk_message: \n<i>You will <color=#0020ed><b>stalk</b></color> <b>$player</b>, who is a $class</i>\n<size=30><color=#FFFFFF66>Cooldown: $cd seconds</color></size>" + Environment.NewLine +
