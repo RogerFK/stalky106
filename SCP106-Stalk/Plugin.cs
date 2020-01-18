@@ -30,7 +30,7 @@ namespace stalky106
 				return;
 			}
 			Info("Prepare to face Larry...");
-			events = new EventHandlers(this);
+			events = new EventHandlers();
 			harmonyCounter++;
 			HarmonyInstance = HarmonyInstance.Create($"rogerfk.stalky106{harmonyCounter}");
 			HarmonyInstance.PatchAll();
