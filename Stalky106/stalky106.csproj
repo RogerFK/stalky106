@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>stalky106</RootNamespace>
-    <AssemblyName>stalky106</AssemblyName>
+    <AssemblyName>Stalky106V1.0</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -34,16 +34,23 @@
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Assembly-CSharp.dll</HintPath>
+    <Reference Include="0Harmony">
+      <HintPath>..\Lib\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\Lib\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="Smod2, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Smod2.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized">
+      <HintPath>..\Lib\Assembly-CSharp_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="EXILED">
+      <HintPath>..\Lib\EXILED.dll</HintPath>
+    </Reference>
+    <Reference Include="EXILED_Events">
+      <HintPath>..\Lib\EXILED_Events.dll</HintPath>
+    </Reference>
+    <Reference Include="Mirror">
+      <HintPath>..\Lib\Mirror.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -71,11 +78,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Methods.cs" />
-    <Compile Include="Pocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StalkyEvents.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="Plugin.cs" />
+    <Compile Include="StalkyConfigs.cs" />
+    <Compile Include="StalkyCreatePortalPatch.cs" />
+    <Compile Include="StalkyMethods.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

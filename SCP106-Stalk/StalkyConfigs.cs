@@ -8,7 +8,7 @@ namespace stalky106
     internal static class StalkyConfigs
     {
 		private static readonly string translationPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED"), "stalky_translations");
-		internal static float cooldown;
+		internal static float cooldownCfg;
 
 		internal static float initialCooldown;
 
@@ -31,13 +31,15 @@ namespace stalky106
 		internal static string doubleClick = "\nClick the portal creation tool again to <color=#ff0955><b>Stalk</b></color> a random player.";
 		internal static string newStalkMessage = "\n<i>You will <color=#0020ed><b>stalk</b></color> <b>$player</b>, who is a $class</i>\n<size=30><color=#FFFFFF66>Cooldown: $cd</color></size>";
 		internal static string noTargetsLeft = "\nNo targets found.";
+		internal static string consoleInfo = "Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore";
 		internal static string cooldownmsg = "\nYou have to wait $time seconds to use <color=#0020ed><b>Stalk</b></color>.";
 		internal static string onGround = "\nYou have to be on the ground to <color=#c9002c><b>stalk</b></color> people.";
+		internal static string error = "\nAn error ocurred. Please, try it again.";
 
 		internal static void ReloadConfigs()
 		{
 			// Configs
-			cooldown = Plugin.Config.GetFloat("stalky_cooldown", 40f);
+			cooldownCfg = Plugin.Config.GetFloat("stalky_cooldown", 40f);
 			initialCooldown = Plugin.Config.GetFloat("stalky_initial_cooldown", 80f);
 			ignoreTeams = Plugin.Config.GetIntList("stalky_ignore_teams");
 			if(ignoreTeams == null)
@@ -108,6 +110,12 @@ namespace stalky106
 						case "on_ground":
 							onGround = value;
 							break;
+						case "error":
+							error = value;
+							break;
+						case "console_info":
+							consoleInfo = value;
+							break;
 						default:
 							Plugin.Error($"Unknown translation: {key}");
 							break;
@@ -124,7 +132,7 @@ namespace stalky106
 		private static readonly string defaultFileContents = @"stalkBroadcast: <size=80><color=#0020ed><b>Stalk</b></color></size>\nIn this server, you can <color=#0020ed><b>stalk</b></color> humans by double-clicking the portal creation button in the <b>[TAB]</b> menu." + Environment.NewLine +
 						@"new_stalk_ready: \n<b><color=#0020ed><b>Stalk</b></color> is <color=#00e861>ready</color></b>.\n<size=30>Double-click your portal creating tool to use it.</size>" + Environment.NewLine +
 						@"double_click: \nClick the portal creation tool again to <color=#ff0955><b>Stalk</b></color> a random player." + Environment.NewLine +
-						@"console_info: Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore. Additionaly, you can use 'cmdbind g .stalk' (for example) to bind it to a key to not have to open the console every time you do it" + Environment.NewLine +
+						@"console_info: Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore." + Environment.NewLine +
 						@"new_stalk_message: \n<i>You will <color=#0020ed><b>stalk</b></color> <b>$player</b>, who is a $class</i>\n<size=30><color=#FFFFFF66>Cooldown: $cd seconds</color></size>" + Environment.NewLine +
 						@"no_targets_left: \nNo targets found." + Environment.NewLine +
 						@"cooldownmsg: \nYou have to wait $time seconds to use <color=#0020ed><b>Stalk</b></color>." + Environment.NewLine +
