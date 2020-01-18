@@ -18,6 +18,8 @@ namespace stalky106
 			MEC.Timing.KillCoroutines("PortalProcedure");
 			MEC.Timing.KillCoroutines("StalkyCooldown");
 			MEC.Timing.KillCoroutines("ForceTeleportLarry");
+			Events.RoundStartEvent -= events.OnRoundStart;
+			Events.SetClassEvent -= events.OnSetClass;
 			Info("Larry won't ever stalk you again at night...");
 		}
 
