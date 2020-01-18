@@ -44,7 +44,7 @@ namespace stalky106
                     return true;
                 }
                 StalkyMethods.disableFor = Time.time + 4;
-                MEC.Timing.RunCoroutine(StalkyMethods.StalkCoroutine(__instance, bc), MEC.Segment.Update, "StalkCoroutine");
+                Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(StalkyMethods.StalkCoroutine(__instance, bc), MEC.Segment.Update));
                 return false;
             }
         }

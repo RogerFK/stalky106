@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Harmony;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace stalky106
@@ -15,7 +16,7 @@ namespace stalky106
                 stalkyCd = Time.time + value;
                 if (StalkyConfigs.announceReady)
                 {
-                    MEC.Timing.RunCoroutine(StalkyCooldownAnnounce(value), MEC.Segment.Update, "StalkyCooldownAnnounce");
+                    Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(StalkyCooldownAnnounce(value), MEC.Segment.Update));
                 }
             }
             get
@@ -42,8 +43,8 @@ namespace stalky106
             {
                 Role role = rh.characterClassManager.Classes.SafeGet(rh.characterClassManager.CurClass);
                 if (!alwaysIgnore.Contains(role.roleId)
-                    && !StalkyConfigs.ignoreRoles.Contains((int) role.roleId)
-                    && !StalkyConfigs.ignoreTeams.Contains((int) EXILED.Plugin.GetTeam(role.roleId)))
+                    && !StalkyConfigs.ignoreRoles.Contains((int)role.roleId)
+                    && !StalkyConfigs.ignoreTeams.Contains((int)EXILED.Plugin.GetTeam(role.roleId)))
                 {
                     list.Add(rh);
                 }
@@ -87,10 +88,10 @@ namespace stalky106
             // Wait another frame after the while loops that goes over players.
             // Only useful for +100 player servers and the potatest server in this case, but it goes to show how to do these.
             yield return MEC.Timing.WaitForOneFrame;
+            Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(PortalProcedure(script, raycastHit.point - Vector3.up), MEC.Segment.Update));
 
-            MEC.Timing.RunCoroutine(PortalProcedure(script, raycastHit.point - Vector3.up), MEC.Segment.Update, "PortalProcedure");
             stalkyCd = Time.time + 60f;
-            MEC.Timing.RunCoroutine(StalkyCooldownAnnounce(60f), MEC.Segment.Update, "StalkyCooldown");
+            Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(StalkyCooldownAnnounce(60f), MEC.Segment.Update));
             stalky106LastTime = Time.time;
             disableFor = Time.time + 10f;
             if (!StalkyConfigs.parsedRoleNames.TryGetValue((int)target.characterClassManager.CurClass, out string className))
@@ -99,7 +100,6 @@ namespace stalky106
             }
             string data = StalkyConfigs.newStalkMessage.Replace("$player", target.nicknameSync.Network_myNickSync).Replace("$class", className).Replace("$cd", StalkyConfigs.cooldownCfg.ToString());
             bc.TargetAddElement(script.connectionToClient, data, 6U, false);
-            yield break;
         }
 
         public static IEnumerator<float> PortalProcedure(Scp106PlayerScript script, Vector3 pos)
@@ -110,10 +110,9 @@ namespace stalky106
             Animator anim = component.portalPrefab.GetComponent<Animator>();
             anim.SetBool("activated", false);
             component.portalPrefab.transform.position = pos;
-            if (StalkyConfigs.autoTp) MEC.Timing.RunCoroutine(ForceTeleportLarry(script), MEC.Segment.FixedUpdate, "ForceTeleportLarry");
+            if (StalkyConfigs.autoTp) Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(ForceTeleportLarry(script), MEC.Segment.FixedUpdate));
             yield return MEC.Timing.WaitForSeconds(1f);
             anim.SetBool("activated", true);
-            yield break;
         }
         private static IEnumerator<float> ForceTeleportLarry(Scp106PlayerScript script)
         {
@@ -124,7 +123,6 @@ namespace stalky106
                 yield return MEC.Timing.WaitForOneFrame;
             }
             while (!script.goingViaThePortal);
-            yield break;
         }
         private static IEnumerator<float> StalkyCooldownAnnounce(float duration)
         {

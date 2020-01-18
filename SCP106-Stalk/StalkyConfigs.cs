@@ -5,8 +5,8 @@ using System.IO;
 
 namespace stalky106
 {
-    internal static class StalkyConfigs
-    {
+	internal static class StalkyConfigs
+	{
 		private static readonly string translationPath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED"), "translations");
 		private static readonly string stalkyTranslationPath = Path.Combine(translationPath, "stalky_translations.txt");
 		internal static float cooldownCfg;
@@ -43,9 +43,9 @@ namespace stalky106
 			cooldownCfg = Plugin.Config.GetFloat("stalky_cooldown", 40f);
 			initialCooldown = Plugin.Config.GetFloat("stalky_initial_cooldown", 80f);
 			ignoreTeams = Plugin.Config.GetIntList("stalky_ignore_teams");
-			if(ignoreTeams == null || ignoreTeams.Count == 0)
+			if (ignoreTeams == null || ignoreTeams.Count == 0)
 			{
-				ignoreTeams = new List<int>() { (int) Team.SCP, (int) Team.CHI, (int) Team.TUT };
+				ignoreTeams = new List<int>() { (int)Team.SCP, (int)Team.CHI, (int)Team.TUT };
 			}
 			ignoreRoles = Plugin.Config.GetIntList("stalky_ignore_roles");
 			if (ignoreRoles == null || ignoreRoles.Count == 0)
@@ -82,7 +82,7 @@ namespace stalky106
 			if (File.Exists(translationPath))
 			{
 				var lines = File.ReadAllLines(translationPath);
-				foreach(string line in lines)
+				foreach (string line in lines)
 				{
 					var splitted = line.Split(':');
 					string key = splitted[0];
@@ -123,7 +123,7 @@ namespace stalky106
 					}
 				}
 			}
-			else 
+			else
 			{
 				if (!Directory.Exists(translationPath))
 				{
