@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace stalky106
 {
-    class StalkyMethods
+    public static class StalkyMethods
     {
         public static float disableFor;
         public static float stalky106LastTime;
@@ -40,10 +40,10 @@ namespace stalky106
             List<ReferenceHub> list = new List<ReferenceHub>();
             foreach (ReferenceHub rh in EXILED.Plugin.GetHubs())
             {
-                Role role = PlayerManager.localPlayer.GetComponent<CharacterClassManager>().Classes.SafeGet(rh.characterClassManager.CurClass);
+                Role role = rh.characterClassManager.Classes.SafeGet(rh.characterClassManager.CurClass);
                 if (!alwaysIgnore.Contains(role.roleId)
-                    && !StalkyConfigs.ignoreRoles.Contains((int)role.roleId)
-                    && !StalkyConfigs.ignoreTeams.Contains((int)role.team))
+                    && !StalkyConfigs.ignoreRoles.Contains((int) role.roleId)
+                    && !StalkyConfigs.ignoreTeams.Contains((int) EXILED.Plugin.GetTeam(role.roleId)))
                 {
                     list.Add(rh);
                 }
@@ -137,6 +137,10 @@ namespace stalky106
                     bc.TargetAddElement(rh.scp079PlayerScript.connectionToClient, StalkyConfigs.newStalkReady, 6U, false);
                 }
             }
+        }
+        public static Team GetTeam(this ReferenceHub rh)
+        {
+            return Team.RIP;
         }
     }
 }
