@@ -64,11 +64,11 @@ namespace stalky106
 					if (int.TryParse(field.Key, out int result))
 					{
 						try { parsedRoleNames.Add(result, field.Value); }
-						catch { Plugin.Error($"Duped role {field.Key}"); }
+						catch { Plugin.Error($"[CONFIG] Duped role {field.Key}"); }
 					}
 					else
 					{
-						Plugin.Error($"Unknown key for line {field.Key}:{field.Value}.");
+						Plugin.Error($"[CONFIG] Unknown key for line {field.Key}:{field.Value}.");
 					}
 				}
 			}
@@ -79,15 +79,15 @@ namespace stalky106
 
 			// Translations
 
-			if (File.Exists(translationPath))
+			if (File.Exists(stalkyTranslationPath))
 			{
-				var lines = File.ReadAllLines(translationPath);
+				var lines = File.ReadAllLines(stalkyTranslationPath);
 				foreach (string line in lines)
 				{
 					var splitted = line.Split(':');
 					string key = splitted[0];
 					string value = line.Substring(key.Length + 1).Trim();
-					// Known keys, doing a switch massively saves time, didn't need to be modular anyways
+					// Known keys, doing a switch massively saves time for me, didn't need to be modular anyways
 					switch (key)
 					{
 						case "stalk_broadcast":
@@ -118,7 +118,7 @@ namespace stalky106
 							consoleInfo = value;
 							break;
 						default:
-							Plugin.Error($"Unknown translation: {key}");
+							Plugin.Error($"[TRANSLATIONS] Unknown translation: {key}");
 							break;
 					}
 				}
@@ -134,7 +134,7 @@ namespace stalky106
 			}
 		}
 		#region File Contents
-		private static readonly string defaultFileContents = @"stalkBroadcast: <size=80><color=#0020ed><b>Stalk</b></color></size>\nIn this server, you can <color=#0020ed><b>stalk</b></color> humans by double-clicking the portal creation button in the <b>[TAB]</b> menu." + Environment.NewLine +
+		private static readonly string defaultFileContents = @"stalk_broadcast: <size=80><color=#0020ed><b>Stalk</b></color></size>\nIn this server, you can <color=#0020ed><b>stalk</b></color> humans by double-clicking the portal creation button in the <b>[TAB]</b> menu." + Environment.NewLine +
 						@"new_stalk_ready: \n<b><color=#0020ed><b>Stalk</b></color> is <color=#f2245f>ready</color></b>\n<size=30>Double-click your portal creating tool to use it.</size>" + Environment.NewLine +
 						@"double_click: \nClick the portal creation tool again to <color=#ff0955><b>Stalk</b></color> a random player." + Environment.NewLine +
 						@"console_info: Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore." + Environment.NewLine +
