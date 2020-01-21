@@ -9,17 +9,14 @@ namespace stalky106
 		private EventHandlers events;
 		public static HarmonyInstance HarmonyInstance { private set; get; }
 		public static int harmonyCounter;
-		public const string Version = "V1.0.2";
+		public const string Version = "V1.0.3";
 		public bool enabled;
 		public static IEnumerable<MEC.CoroutineHandle> Coroutines { set; get; }
 		public override void OnDisable()
 		{
 			if (!enabled) return;
 			HarmonyInstance.UnpatchAll();
-			MEC.Timing.KillCoroutines(Coroutines);
-			MEC.Timing.KillCoroutines("PortalProcedure");
-			MEC.Timing.KillCoroutines("StalkyCooldown");
-			MEC.Timing.KillCoroutines("ForceTeleportLarry");
+			if (Coroutines != null) MEC.Timing.KillCoroutines(Coroutines);
 			Events.RoundStartEvent -= events.OnRoundStart;
 			Events.SetClassEvent -= events.OnSetClass;
 			Info("Larry won't ever stalk you again at night...");
