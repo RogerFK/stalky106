@@ -27,6 +27,7 @@ namespace stalky106
 			if (player.characterClassManager.CurClass == RoleType.Scp106)
 			{
 				player.GetComponent<Broadcast>().TargetAddElement(player.scp079PlayerScript.connectionToClient, StalkyConfigs.stalkBroadcast, 10U, false);
+				player.GetComponent<GameConsoleTransmission>().SendToClient(player.GetComponent<Mirror.NetworkIdentity>().connectionToClient, StalkyConfigs.consoleInfo, "white");
 			}
 		}
 	}
