@@ -9,7 +9,7 @@ namespace stalky106
 		private EventHandlers events;
 		public static HarmonyInstance HarmonyInstance { private set; get; }
 		public static int harmonyCounter;
-		public const string Version = "V1.0.3";
+		public const string Version = "V1.0.4";
 		public bool enabled;
 		public static IEnumerable<MEC.CoroutineHandle> Coroutines { set; get; }
 		public override void OnDisable()
