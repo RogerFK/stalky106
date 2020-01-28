@@ -7,6 +7,14 @@ namespace stalky106
 	public class Stalky106 : Plugin
 	{
 		private EventHandlers events;
+		internal readonly static UnityEngine.Vector3 pocketDimension = new UnityEngine.Vector3(0f, -1998f, 0f);
+		public static UnityEngine.Vector3 PocketDimension
+		{
+			get
+			{
+				return pocketDimension;
+			}
+		}
 		public static HarmonyInstance HarmonyInstance { private set; get; }
 		public static int harmonyCounter;
 		public const string Version = "V1.1";
