@@ -9,13 +9,16 @@ namespace stalky106
 		private EventHandlers events;
 		public static HarmonyInstance HarmonyInstance { private set; get; }
 		public static int harmonyCounter;
-		public const string Version = "V1.0.4";
+		public const string Version = "V1.1";
 		public bool enabled;
 		public static IEnumerable<MEC.CoroutineHandle> Coroutines { set; get; }
 		public override void OnDisable()
 		{
+			if (HarmonyInstance != null || HarmonyInstance != default)
+			{
+				HarmonyInstance.UnpatchAll();
+			}
 			if (!enabled) return;
-			HarmonyInstance.UnpatchAll();
 			if (Coroutines != null) MEC.Timing.KillCoroutines(Coroutines);
 			Events.RoundStartEvent -= events.OnRoundStart;
 			Events.SetClassEvent -= events.OnSetClass;
@@ -38,6 +41,7 @@ namespace stalky106
 			StalkyConfigs.ReloadConfigs();
 			Events.RoundStartEvent += events.OnRoundStart;
 			Events.SetClassEvent += events.OnSetClass;
+			Events.RemoteAdminCommandEvent += events.RACommand;
 		}
 
 		public override string getName => "Stalky106-[TAB]";
