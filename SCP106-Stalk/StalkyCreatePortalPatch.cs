@@ -13,10 +13,11 @@ namespace stalky106
                 return false;
             }
 
-            // If Stalky is disabled by force, just do the original function.
+            // If Stalky is disabled by force, don't even create a portal for the guy
+            // Avoids 1-frame trick to (probably unintentionally) "cancel" the Stalk.
             if (StalkyMethods.disableFor > Time.time)
             {
-                return true;
+                return false;
             }
 
             float timeDifference = Time.time - StalkyMethods.stalky106LastTime;
