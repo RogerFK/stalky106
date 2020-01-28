@@ -9,7 +9,7 @@ namespace stalky106
         public static float disableFor;
         public static float stalky106LastTime;
         private static float stalkyCd;
-        public static float StalkyCooldown
+		public static float StalkyCooldown
         {
             set
             {
@@ -61,17 +61,17 @@ namespace stalky106
             stalky106LastTime = Time.time;
             ReferenceHub target;
             Vector3 portalPosition;
-            Vector3 pocketDimension = new Vector3(0f, -1998f, 0f);
             do
             {
                 int index = Random.Range(0, list.Count);
                 target = list[index];
                 Physics.Raycast(new Ray(target.transform.position, -Vector3.up), out RaycastHit raycastHit, 10f, script.teleportPlacementMask);
+                // If the raycast isn't succesful, the point will be (0, 0, 0), basically Vector3.zero
                 portalPosition = raycastHit.point;
                 list.RemoveAt(index);
             }
-            while ((portalPosition.Equals(Vector3.zero) || Vector3.Distance(portalPosition, pocketDimension) < 40f) && list.Count > 0);
-            if (target == null || (Vector3.Distance(portalPosition, pocketDimension) < 40f))
+            while ((portalPosition.Equals(Vector3.zero) || Vector3.Distance(portalPosition, Stalky106.pocketDimension) < 40f) && list.Count > 0);
+            if (target == null || (Vector3.Distance(portalPosition, Stalky106.pocketDimension) < 40f))
             {
                 bc.TargetAddElement(script.connectionToClient, StalkyConfigs.noTargetsLeft, 4U, false);
                 yield break;
