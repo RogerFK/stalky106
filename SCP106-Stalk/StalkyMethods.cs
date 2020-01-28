@@ -60,26 +60,23 @@ namespace stalky106
 
             stalky106LastTime = Time.time;
             ReferenceHub target;
-            RaycastHit raycastHit;
+            Vector3 portalPosition;
+            Vector3 pocketDimension = new Vector3(0f, -1998f, 0f);
             do
             {
-                int index = UnityEngine.Random.Range(0, list.Count);
+                int index = Random.Range(0, list.Count);
                 target = list[index];
-                Physics.Raycast(new Ray(target.transform.position, -Vector3.up), out raycastHit, 10f, script.teleportPlacementMask);
-                if (Vector3.Distance(target.transform.position, new Vector3(0f, -1998f, 0f)) < 40f)
-                {
-                    target = null;
-                    raycastHit.point = Vector3.zero;
-                }
+                Physics.Raycast(new Ray(target.transform.position, -Vector3.up), out RaycastHit raycastHit, 10f, script.teleportPlacementMask);
+                portalPosition = raycastHit.point;
                 list.RemoveAt(index);
             }
-            while (raycastHit.point.Equals(Vector3.zero) && list.Count > 0);
-            if (target == null)
+            while ((portalPosition.Equals(Vector3.zero) || Vector3.Distance(portalPosition, pocketDimension) < 40f) && list.Count > 0);
+            if (target == null || (Vector3.Distance(portalPosition, pocketDimension) < 40f))
             {
                 bc.TargetAddElement(script.connectionToClient, StalkyConfigs.noTargetsLeft, 4U, false);
                 yield break;
             }
-            if (raycastHit.point.Equals(Vector3.zero))
+            if (portalPosition.Equals(Vector3.zero))
             {
                 bc.TargetAddElement(script.connectionToClient, StalkyConfigs.error, 4U, false);
                 yield break;
@@ -88,9 +85,9 @@ namespace stalky106
             // Wait another frame after the while loops that goes over players.
             // Only useful for +100 player servers and the potatest server in this case, but it goes to show how to do these.
             yield return MEC.Timing.WaitForOneFrame;
-            Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(PortalProcedure(script, raycastHit.point - Vector3.up), MEC.Segment.Update));
+            Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(PortalProcedure(script, portalPosition - Vector3.up), MEC.Segment.Update));
 
-            stalkyCd = Time.time + 60f;
+            stalkyCd = Time.time + StalkyConfigs.cooldownCfg;
             Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(StalkyCooldownAnnounce(60f), MEC.Segment.Update));
             stalky106LastTime = Time.time;
             disableFor = Time.time + 10f;
@@ -127,6 +124,9 @@ namespace stalky106
         private static IEnumerator<float> StalkyCooldownAnnounce(float duration)
         {
             yield return MEC.Timing.WaitForSeconds(duration);
+
+            if (StalkyCreatePortalPatch.ForceDisable) yield break;
+            
             Broadcast bc = PlayerManager.localPlayer.GetComponent<Broadcast>();
             foreach (var rh in EXILED.Plugin.GetHubs())
             {
@@ -135,10 +135,6 @@ namespace stalky106
                     bc.TargetAddElement(rh.scp079PlayerScript.connectionToClient, StalkyConfigs.newStalkReady, 6U, false);
                 }
             }
-        }
-        public static Team GetTeam(this ReferenceHub rh)
-        {
-            return Team.RIP;
         }
     }
 }
