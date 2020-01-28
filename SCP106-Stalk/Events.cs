@@ -10,14 +10,14 @@ namespace stalky106
 		internal void OnRoundStart()
 		{
 			if (StalkyCreatePortalPatch.ForceDisable) return;
-			
+
 			StalkyMethods.StalkyCooldown = StalkyConfigs.initialCooldown;
 		}
 
 		internal void OnSetClass(SetClassEvent ev)
 		{
 			if (StalkyCreatePortalPatch.ForceDisable) return;
-			
+
 			if (ev.Player == PlayerManager.localPlayer) return;
 
 			if (ev.Role == RoleType.Scp106)
