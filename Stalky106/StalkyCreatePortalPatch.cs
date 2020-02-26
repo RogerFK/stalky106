@@ -1,6 +1,6 @@
 ﻿using Harmony;
 
-namespace stalky106
+namespace Stalky106
 {
 	[HarmonyPatch(typeof(Scp106PlayerScript), "CallCmdMakePortal")]
 	class StalkyCreatePortalPatch

@@ -3,7 +3,7 @@ using Harmony;
 using System;
 using System.Collections.Generic;
 
-namespace stalky106
+namespace Stalky106
 {
 	internal class EventHandlers
 	{

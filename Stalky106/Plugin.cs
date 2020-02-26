@@ -2,7 +2,7 @@
 using Harmony;
 using System.Collections.Generic;
 
-namespace stalky106
+namespace Stalky106
 {
 	public class Stalky106 : Plugin
 	{
@@ -30,7 +30,7 @@ namespace stalky106
 			if (Coroutines != null) MEC.Timing.KillCoroutines(Coroutines);
 			Events.RoundStartEvent -= events.OnRoundStart;
 			Events.SetClassEvent -= events.OnSetClass;
-			Info("Larry won't ever stalk you again at night...");
+			Log.Info("Larry won't ever stalk you again at night...");
 		}
 
 		public override void OnEnable()
@@ -38,10 +38,10 @@ namespace stalky106
 			enabled = Config.GetBool("stalky_enable", true);
 			if (!enabled)
 			{
-				Error("Stalky106 is disabled via configs. It will not be loaded.");
+				Log.Error("Stalky106 is disabled via configs. It will not be loaded.");
 				return;
 			}
-			Info("Prepare to face Larry...");
+			Log.Info("Prepare to face Larry...");
 			events = new EventHandlers();
 			harmonyCounter++;
 			HarmonyInstance = HarmonyInstance.Create($"rogerfk.stalky106{harmonyCounter}");

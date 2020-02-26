@@ -1,9 +1,10 @@
-﻿using Harmony;
+﻿using EXILED.Extensions;
+using Harmony;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace stalky106
+namespace Stalky106
 {
 	public static class StalkyMethods
 	{
@@ -80,7 +81,7 @@ namespace stalky106
 		public static IEnumerator<float> StalkCoroutine(Scp106PlayerScript script, Broadcast bc)
 		{
 			List<ReferenceHub> list = new List<ReferenceHub>();
-			foreach (ReferenceHub rh in EXILED.Plugin.GetHubs())
+			foreach (ReferenceHub rh in Player.GetHubs())
 			{
 				Role role = rh.characterClassManager.Classes.SafeGet(rh.characterClassManager.CurClass);
 				if (!alwaysIgnore.Contains(role.roleId)
@@ -167,7 +168,7 @@ namespace stalky106
 			if (StalkyCreatePortalPatch.ForceDisable) yield break;
 
 			Broadcast bc = PlayerManager.localPlayer.GetComponent<Broadcast>();
-			foreach (var rh in EXILED.Plugin.GetHubs())
+			foreach (var rh in Player.GetHubs())
 			{
 				if (rh.characterClassManager.CurClass == RoleType.Scp106)
 				{

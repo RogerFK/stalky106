@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace stalky106
+namespace Stalky106
 {
 	internal static class StalkyConfigs
 	{
@@ -64,11 +64,11 @@ namespace stalky106
 					if (int.TryParse(field.Key, out int result))
 					{
 						try { parsedRoleNames.Add(result, field.Value); }
-						catch { Plugin.Error($"[CONFIG] Duped role {field.Key}"); }
+						catch { Log.Error($"[CONFIG] Duped role {field.Key}"); }
 					}
 					else
 					{
-						Plugin.Error($"[CONFIG] Unknown key for line {field.Key}:{field.Value}.");
+						Log.Error($"[CONFIG] Unknown key for line {field.Key}:{field.Value}.");
 					}
 				}
 			}
@@ -118,7 +118,7 @@ namespace stalky106
 							consoleInfo = value;
 							break;
 						default:
-							Plugin.Error($"[TRANSLATIONS] Unknown translation: {key}");
+							Log.Error($"[TRANSLATIONS] Unknown translation: {key}");
 							break;
 					}
 				}
