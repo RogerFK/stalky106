@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +25,46 @@ namespace stalky106
 				return stalkyCd - Time.time;
 			}
 		}
+
+		internal static bool Stalk(Scp106PlayerScript scp106Script)
+		{
+			// If Stalky is disabled by force, don't even create a portal for the guy
+			// Avoids 1-frame trick to (probably unintentionally) "cancel" the Stalk.
+			if (StalkyMethods.disableFor > Time.time)
+			{
+				return false;
+			}
+
+			float timeDifference = Time.time - StalkyMethods.stalky106LastTime;
+			float cdAux = StalkyMethods.StalkyCooldown;
+			Broadcast bc = PlayerManager.localPlayer.GetComponent<Broadcast>();
+			if (timeDifference > 6f)
+			{
+				StalkyMethods.stalky106LastTime = Time.time;
+				if (cdAux < 0)
+				{
+					bc.TargetClearElements(scp106Script.connectionToClient);
+					bc.TargetAddElement(scp106Script.connectionToClient, StalkyConfigs.doubleClick, 6u, false);
+				}
+				return true;
+			}
+			else
+			{
+				bc.TargetClearElements(scp106Script.connectionToClient);
+				if (cdAux > 0)
+				{
+					StalkyMethods.stalky106LastTime = Time.time;
+					int i = 0;
+					for (; i < 5 && cdAux > i; i++) bc.TargetAddElement(scp106Script.connectionToClient, StalkyConfigs.cooldownmsg.Replace("$time", (cdAux - i).ToString("00")), 1u, false);
+					StalkyMethods.disableFor = Time.time + i + 1;
+					return true;
+				}
+				StalkyMethods.disableFor = Time.time + 4;
+				Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(StalkyMethods.StalkCoroutine(scp106Script, bc), MEC.Segment.Update));
+				return false;
+			}
+		}
+
 		public static readonly string[] defaultRoleNames = new string[]
 		  { "<color=#F00>SCP-173</color>", "<color=#FF8E00>Class D</color>", "Spectator",
 			"<color=#F00>SCP-106</color>", "<color=#0096FF>NTF Scientist</color>", "<color=#F00>SCP-049</color>",
@@ -63,7 +104,7 @@ namespace stalky106
 			Vector3 portalPosition;
 			do
 			{
-				int index = Random.Range(0, list.Count);
+				int index = UnityEngine.Random.Range(0, list.Count);
 				target = list[index];
 				Physics.Raycast(new Ray(target.transform.position, -Vector3.up), out RaycastHit raycastHit, 10f, script.teleportPlacementMask);
 				// If the raycast isn't succesful, the point will be (0, 0, 0), basically Vector3.zero
@@ -86,9 +127,7 @@ namespace stalky106
 			// Only useful for +100 player servers and the potatest server in this case, but it goes to show how to do these.
 			yield return MEC.Timing.WaitForOneFrame;
 			Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(PortalProcedure(script, portalPosition - Vector3.up), MEC.Segment.Update));
-
-			stalkyCd = Time.time + StalkyConfigs.cooldownCfg;
-			Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(StalkyCooldownAnnounce(60f), MEC.Segment.Update));
+			StalkyCooldown = StalkyConfigs.cooldownCfg;
 			stalky106LastTime = Time.time;
 			disableFor = Time.time + 10f;
 			if (!StalkyConfigs.parsedRoleNames.TryGetValue((int)target.characterClassManager.CurClass, out string className))
