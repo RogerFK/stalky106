@@ -15,7 +15,7 @@ namespace Stalky106
 			}
 		}
 		public static int harmonyCounter;
-		public const string Version = "V1.3";
+		public const string Version = "V1.2";
 		public bool enabled;
 		public static List<MEC.CoroutineHandle> Coroutines { set; get; }
 		public override void OnDisable()
