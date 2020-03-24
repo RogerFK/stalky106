@@ -1,5 +1,4 @@
 ﻿using EXILED.Extensions;
-using Harmony;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,6 +25,8 @@ namespace Stalky106
 				return stalkyCd - Time.time;
 			}
 		}
+
+		public static bool ForceDisable { get; internal set; }
 
 		internal static bool Stalk(Scp106PlayerScript scp106Script)
 		{
@@ -86,7 +87,7 @@ namespace Stalky106
 				Role role = rh.characterClassManager.Classes.SafeGet(rh.characterClassManager.CurClass);
 				if (!alwaysIgnore.Contains(role.roleId)
 					&& !StalkyConfigs.ignoreRoles.Contains((int)role.roleId)
-					&& !StalkyConfigs.ignoreTeams.Contains((int)EXILED.Plugin.GetTeam(role.roleId)))
+					&& !StalkyConfigs.ignoreTeams.Contains((int)rh.GetTeam()))
 				{
 					list.Add(rh);
 				}
@@ -165,7 +166,7 @@ namespace Stalky106
 		{
 			yield return MEC.Timing.WaitForSeconds(duration);
 
-			if (StalkyCreatePortalPatch.ForceDisable) yield break;
+			if (StalkyMethods.ForceDisable) yield break;
 
 			Broadcast bc = PlayerManager.localPlayer.GetComponent<Broadcast>();
 			foreach (var rh in Player.GetHubs())

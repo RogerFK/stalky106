@@ -36,6 +36,7 @@ namespace Stalky106
 		internal static string cooldownmsg = "\nYou have to wait $time seconds to use <color=#0020ed><b>Stalk</b></color>.";
 		internal static string onGround = "\nYou have to be on the ground to <color=#c9002c><b>stalk</b></color> people.";
 		internal static string error = "\nAn error ocurred. Please, try it again.";
+		internal static bool throwOnError = false;
 
 		internal static void ReloadConfigs()
 		{
@@ -43,6 +44,7 @@ namespace Stalky106
 			cooldownCfg = Plugin.Config.GetFloat("stalky_cooldown", 40f);
 			initialCooldown = Plugin.Config.GetFloat("stalky_initial_cooldown", 80f);
 			ignoreTeams = Plugin.Config.GetIntList("stalky_ignore_teams");
+			throwOnError = Plugin.Config.GetBool("stalky_throw_on_error");
 			if (ignoreTeams == null || ignoreTeams.Count == 0)
 			{
 				ignoreTeams = new List<int>() { (int)Team.SCP, (int)Team.CHI, (int)Team.TUT };

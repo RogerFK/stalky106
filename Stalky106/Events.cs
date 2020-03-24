@@ -1,5 +1,4 @@
 using EXILED;
-using Harmony;
 using System;
 using System.Collections.Generic;
 
@@ -9,14 +8,14 @@ namespace Stalky106
 	{
 		internal void OnRoundStart()
 		{
-			if (StalkyCreatePortalPatch.ForceDisable) return;
+			if (StalkyMethods.ForceDisable) return;
 
 			StalkyMethods.StalkyCooldown = StalkyConfigs.initialCooldown;
 		}
 
 		internal void OnSetClass(SetClassEvent ev)
 		{
-			if (StalkyCreatePortalPatch.ForceDisable) return;
+			if (StalkyMethods.ForceDisable) return;
 
 			if (ev.Player == PlayerManager.localPlayer) return;
 
@@ -48,22 +47,48 @@ namespace Stalky106
 			switch (upperedCommand)
 			{
 				case "STALK DISABLE":
-					ev.Sender.RaReply($"Stalky106#Stalk {(StalkyCreatePortalPatch.ForceDisable ? "was already" : string.Empty)} disabled.",
-						!StalkyCreatePortalPatch.ForceDisable, false, string.Empty);
+					ev.Sender.RaReply($"Stalky106#Stalk {(StalkyMethods.ForceDisable ? "was already" : string.Empty)} disabled.",
+						!StalkyMethods.ForceDisable, false, string.Empty);
 
-					StalkyCreatePortalPatch.ForceDisable = true;
+					StalkyMethods.ForceDisable = true;
+					ev.Allow = false;
 					break;
 
 				case "STALK ENABLE":
-					ev.Sender.RaReply($"Stalky106#Stalk {(!StalkyCreatePortalPatch.ForceDisable ? "was already" : string.Empty)} enabled.",
-						StalkyCreatePortalPatch.ForceDisable, false, string.Empty);
+					ev.Sender.RaReply($"Stalky106#Stalk {(!StalkyMethods.ForceDisable ? "was already" : string.Empty)} enabled.",
+						StalkyMethods.ForceDisable, false, string.Empty);
 
-					StalkyCreatePortalPatch.ForceDisable = false;
+					StalkyMethods.ForceDisable = false;
+					ev.Allow = false;
 					break;
 
 				default:
 					ev.Sender.RaReply("Stalky106#Command unrecognized.", false, false, string.Empty);
+					ev.Allow = false;
 					return;
+			}
+		}
+
+		internal void OnCreatePortal(Scp106CreatedPortalEvent ev)
+		{
+			try
+			{
+				if (ev.Player != null)
+				{
+					ev.Allow = StalkyMethods.Stalk(ev.Player.GetComponent<Scp106PlayerScript>());
+				}
+			}
+			catch (Exception ex)
+			{
+				if(StalkyConfigs.throwOnError)
+				{
+					EXILED.Log.Error("Error in Stalky106!");
+					throw;
+				}
+				else 
+				{
+					Log.Error("Error in Stalky106: " + ex);
+				}
 			}
 		}
 	}
