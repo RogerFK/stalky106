@@ -1,4 +1,5 @@
 ﻿using EXILED;
+using System;
 using System.Collections.Generic;
 
 namespace Stalky106
@@ -15,13 +16,13 @@ namespace Stalky106
 			}
 		}
 		public static int harmonyCounter;
-		public const string Version = "V1.2";
+		public const string Version = "V1.2.1";
 		public bool enabled;
 		public static List<MEC.CoroutineHandle> Coroutines { set; get; }
 		public override void OnDisable()
 		{
 			if (!enabled) return;
-			if (Coroutines != null) MEC.Timing.KillCoroutines(Coroutines);
+			if (Coroutines != null && Coroutines.Count > 0) MEC.Timing.KillCoroutines(Coroutines);
 			Events.RoundStartEvent -= events.OnRoundStart;
 			Events.SetClassEvent -= events.OnSetClass;
 			Events.RemoteAdminCommandEvent -= events.RACommand;
@@ -37,6 +38,7 @@ namespace Stalky106
 				Log.Error("Stalky106 is disabled via configs. It will not be loaded.");
 				return;
 			}
+			Coroutines = new List<MEC.CoroutineHandle>();
 			Log.Info("Prepare to face Larry...");
 			events = new EventHandlers();
 			StalkyConfigs.ReloadConfigs();

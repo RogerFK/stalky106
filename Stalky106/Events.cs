@@ -8,9 +8,20 @@ namespace Stalky106
 	{
 		internal void OnRoundStart()
 		{
+		try {
 			if (StalkyMethods.ForceDisable) return;
-
-			StalkyMethods.StalkyCooldown = StalkyConfigs.initialCooldown;
+			}
+			catch (Exception ex) {
+				Log.Error("ForceDisable threw: " + ex.Message);
+			}
+			try
+			{
+				StalkyMethods.StalkyCooldown = StalkyConfigs.initialCooldown;
+			}
+			catch (Exception ex)
+			{
+				Log.Error("StalkyCooldown/InitialCooldown threw: " + ex.Message);
+			}
 		}
 
 		internal void OnSetClass(SetClassEvent ev)

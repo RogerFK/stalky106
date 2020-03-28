@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // La información general de un ensamblado se controla mediante el siguiente 
 // conjunto de atributos. Cambie estos valores de atributo para modificar la información
 // asociada con un ensamblado.
-[assembly: AssemblyTitle("Stalky106V1.2")]
+[assembly: AssemblyTitle("Stalky106V1.2.1")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Stalky106V1.2")]
+[assembly: AssemblyProduct("Stalky106V1.2.1")]
 [assembly: AssemblyCopyright("CC-BY 3.0")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
