@@ -1,4 +1,4 @@
-﻿using EXILED.Extensions;
+using EXILED.Extensions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,24 +45,24 @@ namespace Stalky106
 				StalkyMethods.stalky106LastTime = Time.time;
 				if (cdAux < 0)
 				{
-					bc.TargetClearElements(scp106Script.connectionToClient);
-					bc.TargetAddElement(scp106Script.connectionToClient, StalkyConfigs.doubleClick, 6u, false);
+					Player.ClearBroadcasts(PlayerManager.localPlayer.GetPlayer());
+					Player.Broadcast(PlayerManager.localPlayer.GetPlayer(), 6, StalkyConfigs.doubleClick, false);
 				}
 				return true;
 			}
 			else
 			{
-				bc.TargetClearElements(scp106Script.connectionToClient);
+				Player.ClearBroadcasts(PlayerManager.localPlayer.GetPlayer());
 				if (cdAux > 0)
 				{
 					StalkyMethods.stalky106LastTime = Time.time;
 					int i = 0;
-					for (; i < 5 && cdAux > i; i++) bc.TargetAddElement(scp106Script.connectionToClient, StalkyConfigs.cooldownmsg.Replace("$time", (cdAux - i).ToString("00")), 1u, false);
+					for (; i < 5 && cdAux > i; i++) Player.Broadcast(PlayerManager.localPlayer.GetPlayer(), 1, StalkyConfigs.cooldownmsg.Replace("$time", (cdAux - i).ToString("00")), false);
 					StalkyMethods.disableFor = Time.time + i + 1;
 					return true;
 				}
 				StalkyMethods.disableFor = Time.time + 4;
-				Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(StalkyMethods.StalkCoroutine(scp106Script, bc), MEC.Segment.Update));
+				Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(StalkyMethods.StalkCoroutine(scp106Script), MEC.Segment.Update));
 				return false;
 			}
 		}
@@ -79,7 +79,7 @@ namespace Stalky106
 
 		// It will ALWAYS ignore spectators and unconnected players.
 		private static readonly RoleType[] alwaysIgnore = new RoleType[] { RoleType.None, RoleType.Spectator, RoleType.Scp079 };
-		public static IEnumerator<float> StalkCoroutine(Scp106PlayerScript script, Broadcast bc)
+		public static IEnumerator<float> StalkCoroutine(Scp106PlayerScript script)
 		{
 			List<ReferenceHub> list = new List<ReferenceHub>();
 			foreach (ReferenceHub rh in Player.GetHubs())
@@ -94,7 +94,7 @@ namespace Stalky106
 			}
 			if (list.IsEmpty())
 			{
-				bc.TargetAddElement(script.connectionToClient, StalkyConfigs.noTargetsLeft, 4U, false);
+				Player.Broadcast(PlayerManager.localPlayer.GetPlayer(), 4, StalkyConfigs.noTargetsLeft, false);
 				yield break;
 			}
 
@@ -116,12 +116,12 @@ namespace Stalky106
 			while ((portalPosition.Equals(Vector3.zero) || Vector3.Distance(portalPosition, Stalky106.pocketDimension) < 40f) && list.Count > 0);
 			if (target == null || (Vector3.Distance(portalPosition, Stalky106.pocketDimension) < 40f))
 			{
-				bc.TargetAddElement(script.connectionToClient, StalkyConfigs.noTargetsLeft, 4U, false);
+				Player.Broadcast(PlayerManager.localPlayer.GetPlayer(), 4, StalkyConfigs.noTargetsLeft, false);
 				yield break;
 			}
 			if (portalPosition.Equals(Vector3.zero))
 			{
-				bc.TargetAddElement(script.connectionToClient, StalkyConfigs.error, 4U, false);
+				Player.Broadcast(PlayerManager.localPlayer.GetPlayer(), 4, StalkyConfigs.error, false);
 				yield break;
 			}
 
@@ -137,7 +137,7 @@ namespace Stalky106
 				className = defaultRoleNames[(int)target.characterClassManager.CurClass];
 			}
 			string data = StalkyConfigs.newStalkMessage.Replace("$player", target.nicknameSync.Network_myNickSync).Replace("$class", className).Replace("$cd", StalkyConfigs.cooldownCfg.ToString());
-			bc.TargetAddElement(script.connectionToClient, data, 6U, false);
+			Player.Broadcast(PlayerManager.localPlayer.GetPlayer(), 6, data, false);
 		}
 
 		public static IEnumerator<float> PortalProcedure(Scp106PlayerScript script, Vector3 pos)
@@ -168,12 +168,11 @@ namespace Stalky106
 
 			if (StalkyMethods.ForceDisable) yield break;
 
-			Broadcast bc = PlayerManager.localPlayer.GetComponent<Broadcast>();
 			foreach (var rh in Player.GetHubs())
 			{
 				if (rh.characterClassManager.CurClass == RoleType.Scp106)
 				{
-					bc.TargetAddElement(rh.scp079PlayerScript.connectionToClient, StalkyConfigs.newStalkReady, 6U, false);
+					rh.Broadcast(6, StalkyConfigs.newStalkReady, false);
 				}
 			}
 		}
