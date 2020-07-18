@@ -1,3 +1,4 @@
+using System;
 using Exiled.Events.EventArgs;
 
 namespace Stalky106
@@ -12,7 +13,7 @@ namespace Stalky106
 
 		internal void OnRoundStart()
 		{
-			if (plugin.Config.IsEnabled) return;
+			if (!plugin.Config.IsEnabled) return;
 
 			// should never be null but you never know
 			if (plugin.Methods != null)
@@ -23,7 +24,7 @@ namespace Stalky106
 
 		internal void OnSetClass(ChangingRoleEventArgs ev)
 		{
-			if (plugin.Config.IsEnabled || ev.Player.GameObject == PlayerManager.localPlayer) return;
+			if (!plugin.Config.IsEnabled || ev.Player.GameObject == PlayerManager.localPlayer) return;
 
 			if (ev.NewRole == RoleType.Scp106)
 			{
@@ -37,6 +38,8 @@ namespace Stalky106
 				}));
 			}
 		}
+
+		internal void OnCreatePortal(CreatingPortalEventArgs ev) => ev.IsAllowed = plugin.Methods.Stalk(ev.Player);
 	}
 }
 

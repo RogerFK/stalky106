@@ -6,6 +6,7 @@ using UnityEngine;
 
 using PlyEvents = Exiled.Events.Handlers.Player;
 using SvEvents = Exiled.Events.Handlers.Server;
+using ScpEvents = Exiled.Events.Handlers.Scp106;
 
 namespace Stalky106
 {
@@ -31,7 +32,7 @@ namespace Stalky106
 			events = new EventHandlers(this);
 			SvEvents.RoundStarted += events.OnRoundStart;
 			PlyEvents.ChangingRole += events.OnSetClass;
-
+			ScpEvents.CreatingPortal += events.OnCreatePortal;
 			base.OnEnabled();
 		}
 
@@ -42,6 +43,7 @@ namespace Stalky106
 			{
 				SvEvents.RoundStarted -= events.OnRoundStart;
 				PlyEvents.ChangingRole -= events.OnSetClass;
+				ScpEvents.CreatingPortal -= events.OnCreatePortal;
 				events = null;
 			}
 			if (Config.IsEnabled)
