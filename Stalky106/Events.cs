@@ -1,69 +1,40 @@
-using EXILED;
-using Harmony;
-using System;
-using System.Collections.Generic;
+using Exiled.Events.EventArgs;
 
 namespace Stalky106
 {
 	internal class EventHandlers
 	{
+		private readonly StalkyPlugin plugin;
+		public EventHandlers(StalkyPlugin plugin)
+		{
+			this.plugin = plugin;
+		}
+
 		internal void OnRoundStart()
 		{
-			if (StalkyCreatePortalPatch.ForceDisable) return;
+			if (plugin.Config.IsEnabled) return;
 
-			StalkyMethods.StalkyCooldown = StalkyConfigs.initialCooldown;
-		}
-
-		internal void OnSetClass(SetClassEvent ev)
-		{
-			if (StalkyCreatePortalPatch.ForceDisable) return;
-
-			if (ev.Player == PlayerManager.localPlayer) return;
-
-			if (ev.Role == RoleType.Scp106)
+			// should never be null but you never know
+			if (plugin.Methods != null)
 			{
-				Stalky106.Coroutines.Add(MEC.Timing.RunCoroutine(DelayBroadcast(ev.Player), MEC.Segment.FixedUpdate));
+				plugin.Methods.StalkyCooldown = plugin.Config.Preferences.InitialCooldown;
 			}
 		}
 
-		private IEnumerator<float> DelayBroadcast(ReferenceHub player)
+		internal void OnSetClass(ChangingRoleEventArgs ev)
 		{
-			yield return MEC.Timing.WaitForSeconds(0.5f);
-			if (player.characterClassManager.CurClass == RoleType.Scp106)
+			if (plugin.Config.IsEnabled || ev.Player.GameObject == PlayerManager.localPlayer) return;
+
+			if (ev.NewRole == RoleType.Scp106)
 			{
-				player.GetComponent<Broadcast>().TargetAddElement(player.scp079PlayerScript.connectionToClient, StalkyConfigs.stalkBroadcast, 10U, false);
-				player.GetComponent<GameConsoleTransmission>().SendToClient(player.GetComponent<Mirror.NetworkIdentity>().connectionToClient, StalkyConfigs.consoleInfo, "white");
-			}
-		}
-
-		internal void RACommand(ref RACommandEvent ev)
-		{
-			// safety first
-			if (string.IsNullOrWhiteSpace(ev.Command)) return;
-
-			string upperedCommand = ev.Command.ToUpperInvariant();
-
-			if (!upperedCommand.StartsWith("STALK")) return;
-
-			switch (upperedCommand)
-			{
-				case "STALK DISABLE":
-					ev.Sender.RaReply($"Stalky106#Stalk {(StalkyCreatePortalPatch.ForceDisable ? "was already" : string.Empty)} disabled.",
-						!StalkyCreatePortalPatch.ForceDisable, false, string.Empty);
-
-					StalkyCreatePortalPatch.ForceDisable = true;
-					break;
-
-				case "STALK ENABLE":
-					ev.Sender.RaReply($"Stalky106#Stalk {(!StalkyCreatePortalPatch.ForceDisable ? "was already" : string.Empty)} enabled.",
-						StalkyCreatePortalPatch.ForceDisable, false, string.Empty);
-
-					StalkyCreatePortalPatch.ForceDisable = false;
-					break;
-
-				default:
-					ev.Sender.RaReply("Stalky106#Command unrecognized.", false, false, string.Empty);
-					return;
+				plugin.coroutines.Add(MEC.Timing.CallDelayed(0.5f, () =>
+				{
+					if (ev.Player.Role == RoleType.Scp106)
+					{
+						ev.Player.Broadcast(10, plugin.Config.Translations.WelcomeBroadcast);
+						ev.Player.SendConsoleMessage(plugin.Config.Translations.ConsoleInfo, "white");
+					}
+				}));
 			}
 		}
 	}

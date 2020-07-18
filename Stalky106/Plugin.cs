@@ -1,61 +1,54 @@
-﻿using EXILED;
-using Harmony;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using Exiled.API.Features;
+
+using UnityEngine;
+
+using PlyEvents = Exiled.Events.Handlers.Player;
+using SvEvents = Exiled.Events.Handlers.Server;
 
 namespace Stalky106
 {
-	public class Stalky106 : Plugin
+	public class StalkyPlugin : Plugin<PluginConfig>
 	{
-		private EventHandlers events;
-		internal readonly static UnityEngine.Vector3 pocketDimension = new UnityEngine.Vector3(0f, -1998f, 0f);
-		public static UnityEngine.Vector3 PocketDimension
-		{
-			get
-			{
-				return pocketDimension;
-			}
-		}
-		public static HarmonyInstance HarmonyInstance { private set; get; }
-		public static int harmonyCounter;
-		public const string Version = "V1.1";
-		public bool enabled;
-		public static IEnumerable<MEC.CoroutineHandle> Coroutines { set; get; }
-		public override void OnDisable()
-		{
-			if (HarmonyInstance != null || HarmonyInstance != default)
-			{
-				HarmonyInstance.UnpatchAll();
-			}
-			if (!enabled) return;
-			if (Coroutines != null) MEC.Timing.KillCoroutines(Coroutines);
-			Events.RoundStartEvent -= events.OnRoundStart;
-			Events.SetClassEvent -= events.OnSetClass;
-			Log.Info("Larry won't ever stalk you again at night...");
-		}
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "More visually appealing naming style")]
+		public const string VersionStr = "2.0.0.0";
+		public List<MEC.CoroutineHandle> coroutines = new List<MEC.CoroutineHandle>();
+		public override string Prefix => "ST106";
+		public static readonly Vector3 pocketDimension = new Vector3(0f, -1998f, 0f);
 
-		public override void OnEnable()
+		private EventHandlers events;
+		public StalkyMethods Methods { private set; get; }
+
+		public override void OnEnabled()
 		{
-			enabled = Config.GetBool("stalky_enable", true);
-			if (!enabled)
+			if (!Config.IsEnabled)
 			{
-				Log.Error("Stalky106 is disabled via configs. It will not be loaded.");
+				Log.Info("Stalky106 is disabled via configs. It will not be loaded.");
 				return;
 			}
 			Log.Info("Prepare to face Larry...");
-			events = new EventHandlers();
-			harmonyCounter++;
-			HarmonyInstance = HarmonyInstance.Create($"rogerfk.stalky106{harmonyCounter}");
-			HarmonyInstance.PatchAll();
-			StalkyConfigs.ReloadConfigs();
-			Events.RoundStartEvent += events.OnRoundStart;
-			Events.SetClassEvent += events.OnSetClass;
-			Events.RemoteAdminCommandEvent += events.RACommand;
+			events = new EventHandlers(this);
+			SvEvents.RoundStarted += events.OnRoundStart;
+			PlyEvents.ChangingRole += events.OnSetClass;
+
+			base.OnEnabled();
 		}
 
-		public override string getName => "Stalky106-[TAB]";
-
-		public override void OnReload()
+		public override void OnDisabled()
 		{
+			if (coroutines != null && coroutines.Count > 0) MEC.Timing.KillCoroutines(coroutines);
+			if (events != null)
+			{
+				SvEvents.RoundStarted -= events.OnRoundStart;
+				PlyEvents.ChangingRole -= events.OnSetClass;
+				events = null;
+			}
+			if (Config.IsEnabled)
+			{
+				Log.Info("Larry won't ever stalk you again at night...");
+				base.OnDisabled();
+			}
 		}
 	}
 }
