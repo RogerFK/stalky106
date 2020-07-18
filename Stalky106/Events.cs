@@ -28,7 +28,7 @@ namespace Stalky106
 
 			if (ev.NewRole == RoleType.Scp106)
 			{
-				plugin.coroutines.Add(MEC.Timing.CallDelayed(0.5f, () =>
+				plugin.AddCoroutine(MEC.Timing.CallDelayed(0.5f, () =>
 				{
 					if (ev.Player.Role == RoleType.Scp106)
 					{

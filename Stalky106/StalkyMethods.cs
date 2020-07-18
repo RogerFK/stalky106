@@ -18,7 +18,7 @@ namespace Stalky106
 				stalkyCd = Time.time + value;
 				if (plugin.Config.Preferences.AnnounceReady)
 				{
-					plugin.coroutines.Add(MEC.Timing.RunCoroutine(this.AnnounceGlobalCooldown(value), MEC.Segment.Update));
+					plugin.NewCoroutine(AnnounceGlobalCooldown(value));
 				}
 			}
 			get => stalkyCd - Time.time;
@@ -74,7 +74,7 @@ namespace Stalky106
 					return true;
 				}
 				disableFor = Time.time + 4;
-				plugin.coroutines.Add(MEC.Timing.RunCoroutine(this.StalkCoroutine(player), MEC.Segment.Update));
+				plugin.NewCoroutine(StalkCoroutine(player));
 				return false;
 			}
 		}
@@ -91,7 +91,7 @@ namespace Stalky106
 			foreach (Player plausibleTarget in Player.List)
 			{
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
-					&& !plugin.Config.Preferences.IgnoreRoles.Contains(plausibleTarget.Role) // noooo my nanoseconds
+					&& !plugin.Config.Preferences.IgnoreRoles.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreTeams.Contains(plausibleTarget.Team))
 				{
 					list.Add(plausibleTarget);
@@ -124,7 +124,7 @@ namespace Stalky106
 			// but it might help with poorly implemented logging systems. And bruh it's 2 frames.
 			yield return MEC.Timing.WaitForOneFrame;
 
-			plugin.coroutines.Add(MEC.Timing.RunCoroutine(this.PortalProcedure(scp106Script, portalPosition - Vector3.up), MEC.Segment.Update));
+			plugin.NewCoroutine(PortalProcedure(scp106Script, portalPosition - Vector3.up));
 
 			StalkyCooldown = plugin.Config.Preferences.Cooldown;
 			stalky106LastTime = Time.time;

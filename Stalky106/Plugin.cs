@@ -14,7 +14,9 @@ namespace Stalky106
 	{
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "More visually appealing naming style")]
 		public const string VersionStr = "2.0.0.0";
-		public List<MEC.CoroutineHandle> coroutines = new List<MEC.CoroutineHandle>();
+		private List<MEC.CoroutineHandle> coroutines = new List<MEC.CoroutineHandle>();
+		public void AddCoroutine(MEC.CoroutineHandle coroutineHandle) => coroutines.Add(coroutineHandle);
+		public void NewCoroutine(IEnumerator<float> coroutine, MEC.Segment segment = MEC.Segment.Update) => coroutines.Add(MEC.Timing.RunCoroutine(coroutine, segment));
 		public override string Prefix => "ST106";
 		public static readonly Vector3 pocketDimension = new Vector3(0f, -1998f, 0f);
 
