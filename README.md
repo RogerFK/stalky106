@@ -9,6 +9,7 @@ Ever wondered "how can SCP-106 get closer to its lore?" and wished that they jus
 # How to use it
 
 If you're playing as SCP-106, simply double click in the portal creation tool! It will give you further instructions on who you will stalk, if it's on cooldown...
+
 ![CREATE SINKHOLE](https://i.imgur.com/tQQWaGw.jpg)
 
 # Translation info
