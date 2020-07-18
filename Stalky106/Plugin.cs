@@ -31,6 +31,7 @@ namespace Stalky106
 				return;
 			}
 			Log.Info("Prepare to face Larry...");
+			Methods = new StalkyMethods(this);
 			events = new EventHandlers(this);
 			SvEvents.RoundStarted += events.OnRoundStart;
 			PlyEvents.ChangingRole += events.OnSetClass;
@@ -48,6 +49,9 @@ namespace Stalky106
 				ScpEvents.CreatingPortal -= events.OnCreatePortal;
 				events = null;
 			}
+			
+			Methods = null;
+
 			if (Config.IsEnabled)
 			{
 				Log.Info("Larry won't ever stalk you again at night...");
