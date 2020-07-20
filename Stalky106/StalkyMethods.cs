@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Exiled.API.Features;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Stalky106
 {
@@ -9,19 +12,19 @@ namespace Stalky106
 		// Times
 		public float disableFor;
 		public float stalky106LastTime;
-		private float stalkyCd;
+		private float stalkyAvailable;
 
 		public float StalkyCooldown
 		{
 			set
 			{
-				stalkyCd = Time.time + value;
+				stalkyAvailable = Time.time + value;
 				if (plugin.Config.Preferences.AnnounceReady)
 				{
 					plugin.NewCoroutine(AnnounceGlobalCooldown(value));
 				}
 			}
-			get => stalkyCd - Time.time;
+			get => stalkyAvailable - Time.time;
 		}
 
 		public readonly string[] defaultRoleNames = new string[]
@@ -108,7 +111,7 @@ namespace Stalky106
 
 			Player target = this.FindTarget(list, scp106Script.teleportPlacementMask, out Vector3 portalPosition);
 
-			if (target == null || (Vector3.Distance(portalPosition, StalkyPlugin.pocketDimension) < 40f))
+			if (target == default || (Vector3.Distance(portalPosition, StalkyPlugin.pocketDimension) < 40f))
 			{
 				player.Broadcast(4, plugin.Config.Translations.NoTargetsLeft);
 				yield break;
@@ -134,19 +137,22 @@ namespace Stalky106
 				className = defaultRoleNames[(int)target.Role];
 			}
 
-			player.Broadcast(6, plugin.Config.Translations.StalkMessage
-								.Replace("$player", target.Nickname).Replace("$class", className)
-								.Replace("$cd", plugin.Config.Preferences.Cooldown.ToString()));
+			;
+			player.Broadcast(6, TokenizedReplacer(plugin.Config.Translations.StalkMessage, '$',
+									new Tuple<string, object>[] { 
+										new Tuple<string, object>("player", target.Nickname),
+										new Tuple<string, object>("class", className), 
+										new Tuple<string, object>("cd", plugin.Config.Preferences.Cooldown)}));
 		}
 
 		private Player FindTarget(List<Player> validPlayerList, LayerMask teleportPlacementMask, out Vector3 portalPosition)
 		{
-			Player target = null;
+			Player target;
 			stalky106LastTime = Time.time;
 
 			do
 			{
-				int index = UnityEngine.Random.Range(0, validPlayerList.Count);
+				int index = Random.Range(0, validPlayerList.Count);
 				target = validPlayerList[index];
 				Physics.Raycast(new Ray(target.GameObject.transform.position, -Vector3.up), out RaycastHit raycastHit, 10f, teleportPlacementMask);
 
@@ -158,21 +164,34 @@ namespace Stalky106
 			return target;
 		}
 
+		// Fully commented to show what it does step by step
 		public IEnumerator<float> PortalProcedure(Scp106PlayerScript script, Vector3 pos)
 		{
+			// Sets the NetworkportalPosition to pos. Since it's a C# Property,
+			// NetworkPortalPosition is a "set" method and calls some behaviour on its own.
+			// Using provided API functions ensures reliability in future updates.
 			script.NetworkportalPosition = pos;
+
+			// Checks the config auto_tp to teleport SCP-106
 			if (plugin.Config.Preferences.AutoTp)
 			{
 				yield return MEC.Timing.WaitForSeconds(plugin.Config.Preferences.AutoDelay);
-				// Prevents you from avoiding the auto-tp by jumping.
+
+				// Do-While prevents you from avoiding the auto-tp by jumping.
 				// Bug: frame-perfect jumps will move SCP-106 on the server, but the client
-				// will be able to move. Hence, why the config: force_auto_tp
+				// will be able to move. Hence, why the config: force_auto_tp.
+
+				// This is due to the fact CallCmdUsePortal will try to move SCP-106
+				// and tell the client "hey, I'm moving you, stop right there."
+				// Since the client is airbound, the client won't stop moving but will
+				// do the SCP-106 portal animation.
 				do
 				{
-					script.CallCmdUsePortal();
-					yield return MEC.Timing.WaitForOneFrame;
+					script.CallCmdUsePortal(); // "Tells" the player he's teleporting
+					yield return MEC.Timing.WaitForOneFrame; // Wait for one frame to tell him again
 				}
-				while (!script.goingViaThePortal && plugin.Config.Preferences.ForceAutoTp);
+				while (!script.goingViaThePortal // Stops teleporting the player if SCP-106 is already going through the portal
+				&& plugin.Config.Preferences.ForceAutoTp); // If force_auto_tp, the do-while will only execute once.
 			}
 		}
 		private IEnumerator<float> AnnounceGlobalCooldown(float duration)
@@ -189,5 +208,43 @@ namespace Stalky106
 				}
 			}
 		}
+		private static string TokenizedReplacer(string source, char token, Tuple<string, object>[] valuePairs)
+		{
+			StringBuilder builder = new StringBuilder(Convert.ToInt32(Math.Ceiling(source.Length * 1.5f)));
+
+			int i = 0;
+			int sourceLength = source.Length;
+
+			do
+			{
+				// Find the token
+				char auxChar = token == char.MaxValue ? (char) (char.MaxValue - 1) : char.MaxValue;
+				for (; i < sourceLength && (auxChar = source[i]) != token; i++) builder.Append(auxChar);
+
+				if (auxChar == token)
+				{
+					int movePos = 0;
+
+					foreach (Tuple<string, object> kvp in valuePairs)
+					{
+						int j, k;
+						char watchme;
+						for (j = 0, k = i + 1; j < kvp.Item1.Length && k < source.Length && (watchme = source[k]) == kvp.Item1[j]; j++, k++) ;
+						if (j == kvp.Item1.Length)
+						{
+							movePos = j;
+							builder.Append(kvp.Item2);
+							break;
+						}
+					}
+					i += movePos;
+				}
+				i++;
+			} while (i < sourceLength);
+
+			return builder.ToString();
+		}
+
 	}
+
 }
