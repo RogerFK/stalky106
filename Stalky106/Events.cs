@@ -30,13 +30,13 @@ namespace Stalky106
 			if (ev.NewRole == RoleType.Scp106)
 			{
 				plugin.AddCoroutine(MEC.Timing.CallDelayed(0.5f, () =>
-				{
-					if (ev.Player.Role == RoleType.Scp106)
 					{
-						ev.Player.Broadcast(10, plugin.Config.Translations.WelcomeBroadcast);
-						ev.Player.SendConsoleMessage(plugin.Config.Translations.ConsoleInfo, "white");
-					}
-				}));
+						if (ev.Player.Role == RoleType.Scp106)
+						{
+							ev.Player.Broadcast(10, plugin.Config.Translations.WelcomeBroadcast);
+							ev.Player.SendConsoleMessage(plugin.Config.Translations.ConsoleInfo, "white");
+						}
+					}));
 			}
 		}
 

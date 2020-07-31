@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using Exiled.API.Features;
+
 using UnityEngine;
+
 using Random = UnityEngine.Random;
 
 namespace Stalky106
@@ -21,10 +24,26 @@ namespace Stalky106
 				stalkyAvailable = Time.time + value;
 				if (plugin.Config.Preferences.AnnounceReady)
 				{
-					plugin.NewCoroutine(AnnounceGlobalCooldown(value));
+					plugin.AddCoroutine(MEC.Timing.CallDelayed(value, () => plugin.NewCoroutine(AnnounceGlobalCooldown())));
 				}
 			}
 			get => stalkyAvailable - Time.time;
+		}
+		IEnumerator<float> AnnounceGlobalCooldown()
+		{
+			while (stalkyAvailable > Time.time)
+			{
+				yield return MEC.Timing.WaitForSeconds(0.15F);
+			}
+			if (!plugin.Config.IsEnabled || !plugin.Config.Preferences.AnnounceReady) yield break;
+
+			foreach (Player player in Player.List)
+			{
+				if (player.Role == RoleType.Scp106)
+				{
+					player.Broadcast(6, plugin.Config.Translations.StalkReady);
+				}
+			}
 		}
 
 		public readonly string[] defaultRoleNames = new string[]
@@ -139,9 +158,9 @@ namespace Stalky106
 
 			;
 			player.Broadcast(6, ReplaceAfterToken(plugin.Config.Translations.StalkMessage, '$',
-									new Tuple<string, object>[] { 
+									new Tuple<string, object>[] {
 										new Tuple<string, object>("player", target.Nickname),
-										new Tuple<string, object>("class", className), 
+										new Tuple<string, object>("class", className),
 										new Tuple<string, object>("cd", plugin.Config.Preferences.Cooldown)}));
 		}
 
@@ -194,32 +213,25 @@ namespace Stalky106
 				&& plugin.Config.Preferences.ForceAutoTp); // If force_auto_tp, the do-while will only execute once.
 			}
 		}
-		private IEnumerator<float> AnnounceGlobalCooldown(float duration)
-		{
-			yield return MEC.Timing.WaitForSeconds(duration);
-
-			if (!plugin.Config.IsEnabled) yield break;
-
-			foreach (Player player in Player.List)
-			{
-				if (player.Role == RoleType.Scp106)
-				{
-					player.Broadcast(6, plugin.Config.Translations.StalkReady);
-				}
-			}
-		}
+		private static readonly StringBuilder builder = new StringBuilder();
+		/// <summary>
+		/// Optimized method that replaces a <see cref="string"/> based on an <see cref="Tuple[]"/>
+		/// </summary>
+		/// <param name="source">The string to use as source</param>
+		/// <param name="token">The starting token</param>
+		/// <param name="valuePairs">The value pairs (tuples) to use as "key -> value"</param>
+		/// <returns>The string after replacement</returns>
 		public static string ReplaceAfterToken(string source, char token, Tuple<string, object>[] valuePairs)
 		{
 			if (valuePairs == null)
 			{
 				throw new ArgumentNullException("valuePairs");
 			}
-			StringBuilder builder = new StringBuilder(Convert.ToInt32(Math.Ceiling(source.Length * 1.5f)));
+			builder.Clear();
 
-			int i = 0;
 			int sourceLength = source.Length;
 
-			do
+			for (int i = 0; i < sourceLength; i++)
 			{
 				// Append characters until you find the token
 				char auxChar = token == char.MaxValue ? (char) (char.MaxValue - 1) : char.MaxValue;
@@ -231,8 +243,10 @@ namespace Stalky106
 					int movePos = 0;
 
 					// Try to find a tuple
-					foreach (Tuple<string, object> kvp in valuePairs)
+					int length = valuePairs.Length;
+					for (int ind = 0; ind < length; ind++)
 					{
+						Tuple<string, object> kvp = valuePairs[ind];
 						int j, k;
 						for (j = 0, k = i + 1; j < kvp.Item1.Length && k < source.Length && source[k] == kvp.Item1[j]; j++, k++) ;
 						// General condition for "key found"
@@ -247,8 +261,7 @@ namespace Stalky106
 					if (movePos == 0) builder.Append(token);
 					else i += movePos;
 				}
-				i++;
-			} while (i < sourceLength);
+			}
 
 			return builder.ToString();
 		}
