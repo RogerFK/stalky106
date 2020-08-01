@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Exiled.API.Extensions;
 using Exiled.API.Features;
 
 using UnityEngine;
@@ -116,7 +117,26 @@ namespace Stalky106
 					&& !plugin.Config.Preferences.IgnoreRoles.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreTeams.Contains(plausibleTarget.Team))
 				{
-					list.Add(plausibleTarget);
+					if (plugin.Config.Preferences.SameZoneOnly)
+					{
+						try
+						{
+							if (plausibleTarget.CurrentRoom.Zone == player.CurrentRoom.Zone
+								|| plausibleTarget.CurrentRoom.Zone == Exiled.API.Enums.ZoneType.Unspecified)
+							{
+								list.Add(plausibleTarget);
+							}
+						}
+						catch (Exception ex)
+						{
+							Log.Error(ex.ToString());
+							plugin.Config.Preferences.SameZoneOnly = false;
+						}
+					}
+					else
+					{
+						list.Add(plausibleTarget);
+					}
 				}
 			}
 			if (list.IsEmpty())
