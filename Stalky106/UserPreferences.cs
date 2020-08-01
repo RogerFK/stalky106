@@ -23,7 +23,7 @@ namespace Stalky106
 		public Team[] IgnoreTeams { set; get; } = new Team[] { Team.SCP, Team.CHI, Team.TUT };
 		public RoleType[] IgnoreRoles { set; get; } = new RoleType[] { RoleType.Scp106, RoleType.Scp079 };
 		
-		[Description("Changes behavoiur of stalk by allowing to stalk persons in the same zone as lary")]
-		public bool SameZoneOnly { get; set; } = true;
+		[Description("Changes behaviour of stalk by only allowing to stalk players in the same zone as Larry")]
+		public bool SameZoneOnly { get; set; } = false;
 	}
 }
