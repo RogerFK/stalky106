@@ -119,18 +119,10 @@ namespace Stalky106
 				{
 					if (plugin.Config.Preferences.SameZoneOnly)
 					{
-						try
+						if (plausibleTarget.CurrentRoom.Zone == player.CurrentRoom.Zone
+							|| plausibleTarget.CurrentRoom.Zone == Exiled.API.Enums.ZoneType.Unspecified)
 						{
-							if (plausibleTarget.CurrentRoom.Zone == player.CurrentRoom.Zone
-								|| plausibleTarget.CurrentRoom.Zone == Exiled.API.Enums.ZoneType.Unspecified)
-							{
-								list.Add(plausibleTarget);
-							}
-						}
-						catch (Exception ex)
-						{
-							Log.Error(ex.ToString());
-							plugin.Config.Preferences.SameZoneOnly = false;
+							list.Add(plausibleTarget);
 						}
 					}
 					else
