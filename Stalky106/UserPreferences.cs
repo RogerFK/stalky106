@@ -22,5 +22,8 @@ namespace Stalky106
 		[Description("ignore_teams and ignore_roles will ignore said teams and roles when searching for a player to stalk")]
 		public Team[] IgnoreTeams { set; get; } = new Team[] { Team.SCP, Team.CHI, Team.TUT };
 		public RoleType[] IgnoreRoles { set; get; } = new RoleType[] { RoleType.Scp106, RoleType.Scp079 };
+		
+		[Description("Changes behavoiur of stalk by allowing to stalk persons in the same zone as lary")]
+		public bool SameZoneOnly { get; set; } = true;
 	}
 }
