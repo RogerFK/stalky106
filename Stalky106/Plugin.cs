@@ -7,6 +7,7 @@ using UnityEngine;
 using PlyEvents = Exiled.Events.Handlers.Player;
 using SvEvents = Exiled.Events.Handlers.Server;
 using ScpEvents = Exiled.Events.Handlers.Scp106;
+using Exiled.Loader;
 
 namespace Stalky106
 {
@@ -19,6 +20,7 @@ namespace Stalky106
 		public void NewCoroutine(IEnumerator<float> coroutine, MEC.Segment segment = MEC.Segment.Update) => coroutines.Add(MEC.Timing.RunCoroutine(coroutine, segment));
 		public override string Prefix => "ST106";
 		public static readonly Vector3 pocketDimension = new Vector3(0f, -1998f, 0f);
+		public static bool isScp035 = false;
 
 		private EventHandlers events;
 		public StalkyMethods Methods { private set; get; }
@@ -30,6 +32,7 @@ namespace Stalky106
 				Log.Info("Stalky106 is disabled via configs. It will not be loaded.");
 				return;
 			}
+			Check035();
 			Log.Info("Prepare to face Larry...");
 			Methods = new StalkyMethods(this);
 			events = new EventHandlers(this);
@@ -56,6 +59,19 @@ namespace Stalky106
 			{
 				Log.Info("Larry won't ever stalk you again at night...");
 				base.OnDisabled();
+			}
+		}
+
+
+		internal void Check035()
+		{
+			foreach (var plugin in Loader.Plugins)
+			{
+				if (plugin.Name == "scp035")
+				{
+					isScp035 = true;
+					return;
+				}
 			}
 		}
 	}

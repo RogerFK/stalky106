@@ -7,6 +7,8 @@ using Exiled.API.Features;
 
 using UnityEngine;
 
+using scp035.API;
+
 using Random = UnityEngine.Random;
 
 namespace Stalky106
@@ -113,6 +115,7 @@ namespace Stalky106
 
 			foreach (Player plausibleTarget in Player.List)
 			{
+				if (StalkyPlugin.isScp035 && plausibleTarget.Id == Scp035Data.GetScp035()?.Id) continue;
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreRoles.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreTeams.Contains(plausibleTarget.Team))
