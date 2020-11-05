@@ -14,7 +14,7 @@ namespace Stalky106
 	public class StalkyPlugin : Plugin<PluginConfig>
 	{
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "More visually appealing naming style")]
-		public const string VersionStr = "2.1.0.0";
+		public const string VersionStr = "2.1.1";
 		private readonly List<MEC.CoroutineHandle> coroutines = new List<MEC.CoroutineHandle>();
 		public void AddCoroutine(MEC.CoroutineHandle coroutineHandle) => coroutines.Add(coroutineHandle);
 		public void NewCoroutine(IEnumerator<float> coroutine, MEC.Segment segment = MEC.Segment.Update) => coroutines.Add(MEC.Timing.RunCoroutine(coroutine, segment));
@@ -44,7 +44,7 @@ namespace Stalky106
 
 		public override void OnDisabled()
 		{
-			if (coroutines != null && coroutines.Count > 0) MEC.Timing.KillCoroutines(coroutines);
+			if (coroutines != null && coroutines.Count > 0) MEC.Timing.KillCoroutines(coroutines.ToArray());
 			if (events != null)
 			{
 				SvEvents.RoundStarted -= events.OnRoundStart;

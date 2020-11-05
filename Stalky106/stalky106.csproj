@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Stalky106</RootNamespace>
-    <AssemblyName>Stalky106V2.1.0.0</AssemblyName>
+    <AssemblyName>Stalky106V2.1.1</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -32,13 +32,15 @@
     <LangVersion>7.2</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\..\Desktop\scpsls\SCPSL_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>..\..\..\..\Desktop\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp-Publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\References\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
     <Reference Include="Exiled.API">
       <HintPath>..\..\..\..\AppData\Roaming\EXILED\Plugins\dependencies\Exiled.API.dll</HintPath>
@@ -59,7 +61,7 @@
       <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Mirror.dll</HintPath>
     </Reference>
     <Reference Include="scp035">
-      <HintPath>..\..\scp035\scp035\bin\Release\scp035.dll</HintPath>
+      <HintPath>..\..\References\scp035.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
