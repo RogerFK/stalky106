@@ -48,9 +48,6 @@
     <Reference Include="Exiled.Events">
       <HintPath>..\..\..\..\AppData\Roaming\EXILED\Plugins\Exiled.Events.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Loader">
-      <HintPath>..\..\..\..\AppData\Roaming\EXILED\Exiled.Loader.dll</HintPath>
-    </Reference>
     <Reference Include="Exiled.Permissions">
       <HintPath>..\..\..\..\AppData\Roaming\EXILED\Plugins\Exiled.Permissions.dll</HintPath>
     </Reference>

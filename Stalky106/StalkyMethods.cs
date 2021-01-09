@@ -116,16 +116,10 @@ namespace Stalky106
 
 			foreach (Player plausibleTarget in Player.List)
 			{
-				if (StalkyPlugin.isScp035) 
-				{
-					try {
-						if (plausibleTarget.Id == Scp035Id) continue;
-					} 
-					catch (Exception ex) {
-						Log.Error("SCP035 threw an internal exception: ");
-						Log.Error(ex);
-					}
-				}
+
+				try {
+					if (plausibleTarget.Id == Scp035Id) continue;
+				} catch { }
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreRoles.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreTeams.Contains(plausibleTarget.Team))
