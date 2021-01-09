@@ -54,7 +54,7 @@ namespace Stalky106
 
 			if (plugin.Config.Preferences.MinimumPlayers > playerCount)
 			{
-				ev.Player.Broadcast(8, plugin.Config.Translations.MinPlayers);
+				ev.Player.Broadcast(8, plugin.Config.Translations.MinPlayers.Replace("$count", plugin.Config.Preferences.MinimumPlayers));
 				plugin.Methods.StalkyCooldown = 10f;
 				return;
 			}
@@ -77,14 +77,14 @@ namespace Stalky106
 
 			if (plugin.Config.Preferences.MinimumAlivePlayers > aliveCount) 
 			{
-				ev.Player.Broadcast(8, plugin.Config.Translations.MinAlive);
+				ev.Player.Broadcast(8, plugin.Config.Translations.MinAlive.Replace("$count", plugin.Config.Preferences.MinimumAlivePlayers));
 				plugin.Methods.StalkyCooldown = 10f;
 				return;
 			}
 
 			if (plugin.Config.Preferences.MinimumAliveTargets > targetCount)
 			{
-				ev.Player.Broadcast(8, plugin.Config.Translations.MinTargetsAlive);
+				ev.Player.Broadcast(8, plugin.Config.Translations.MinTargetsAlive.Replace("$count", plugin.Config.Preferences.MinimumAliveTargets));
 				plugin.Methods.StalkyCooldown = 10f;
 				return;
 			}
