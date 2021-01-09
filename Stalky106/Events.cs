@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 
+using NorthwoodLib.Pools;
 namespace Stalky106
 {
 	internal class EventHandlers
@@ -40,7 +43,55 @@ namespace Stalky106
 			}
 		}
 
-		internal void OnCreatePortal(CreatingPortalEventArgs ev) => ev.IsAllowed = plugin.Methods.Stalk(ev.Player);
+		internal void OnCreatePortal(CreatingPortalEventArgs ev) 
+		{
+			if (!ev.IsAllowed) return;
+
+			/* TODO: Move everything that isn't specifically related to stalking/hunting here */
+
+			var list = ListPool<Player>.Shared.Rent(Player.List);
+			int playerCount = list.Count;
+
+			if (plugin.Config.Preferences.MinimumPlayers > playerCount)
+			{
+				ev.Player.Broadcast(8, plugin.Config.Translations.MinPlayers);
+				plugin.Methods.StalkyCooldown = 10f;
+				return;
+			}
+
+			int aliveCount = 0;
+			int targetCount = 0;
+			for (int i = 0; i < playerCount; i++) 
+			{
+				var ply = list[i];
+				// if it's a target
+				if (ply.IsAlive) 
+				{
+					aliveCount++;
+					if (!plugin.Config.Preferences.IgnoreRoles.Contains(ply.Role) && !plugin.Config.Preferences.IgnoreTeams.Contains(ply.Team))
+					{
+						targetCount++;
+					}
+				}
+			}
+
+			if (plugin.Config.Preferences.MinimumAlivePlayers > aliveCount) 
+			{
+				ev.Player.Broadcast(8, plugin.Config.Translations.MinAlive);
+				plugin.Methods.StalkyCooldown = 10f;
+				return;
+			}
+
+			if (plugin.Config.Preferences.MinimumAliveTargets > targetCount)
+			{
+				ev.Player.Broadcast(8, plugin.Config.Translations.MinTargetsAlive);
+				plugin.Methods.StalkyCooldown = 10f;
+				return;
+			}
+
+			ListPool<Player>.Shared.Return(list);
+			ev.IsAllowed = plugin.Methods.Stalk(ev.Player);
+		}
 	}
 }
 

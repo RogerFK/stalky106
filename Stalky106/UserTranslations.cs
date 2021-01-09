@@ -40,9 +40,14 @@ namespace Stalky106
 		public string ConsoleInfo { set; get; } = @"Stalky106 enables additional functionality to SCP-106 by giving him the ability to place a portal to a random player, bringing him closer to the lore";
 		
 		public string Cooldown_Message { set; get; } = @"\nYou have to wait $time seconds to use <color=#0020ed><b>Stalk</b></color>.";
-		
+
 		// public string OnGround { set; get; } = @"\nYou have to be on the ground to <color=#c9002c><b>stalk</b></color> people.";
-		
+
+		public string MinPlayers { set; get; } = @"\nYou can't stalk when there's less than $count players in this server.";
+
+		public string MinAlive { set; get; } = @"\nYou can't stalk when there's less than $count players alive.";
+		public string MinTargetsAlive { set; get; } = @"\nYou can't stalk when there's less than $count targets alive.";
+
 		public string Error { set; get; } = @"\nAn error ocurred. Please, try it again.";
 	}
 }

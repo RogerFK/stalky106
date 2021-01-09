@@ -57,6 +57,10 @@
     <Reference Include="Mirror">
       <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Mirror.dll</HintPath>
     </Reference>
+    <Reference Include="NorthwoodLib, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\References\NorthwoodLib.dll</HintPath>
+    </Reference>
     <Reference Include="scp035">
       <HintPath>..\..\References\scp035.dll</HintPath>
     </Reference>
