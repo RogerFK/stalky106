@@ -225,7 +225,7 @@ namespace Stalky106
 				// do the SCP-106 portal animation.
 				do
 				{
-					script.CallCmdUsePortal(); // "Tells" the player he's teleporting
+					script.CmdUsePortal(); // "Tells" the player he's teleporting
 					yield return MEC.Timing.WaitForOneFrame; // Wait for one frame to tell him again
 				}
 				while (!script.goingViaThePortal // Stops teleporting the player if SCP-106 is already going through the portal

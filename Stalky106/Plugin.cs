@@ -13,7 +13,7 @@ namespace Stalky106
 	public class StalkyPlugin : Plugin<PluginConfig>
 	{
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "More visually appealing naming style")]
-		public const string VersionStr = "2.2";
+		public const string VersionStr = "3.0";
 		private readonly List<MEC.CoroutineHandle> coroutines = new List<MEC.CoroutineHandle>();
 		public void AddCoroutine(MEC.CoroutineHandle coroutineHandle) => coroutines.Add(coroutineHandle);
 		public void NewCoroutine(IEnumerator<float> coroutine, MEC.Segment segment = MEC.Segment.Update) => coroutines.Add(MEC.Timing.RunCoroutine(coroutine, segment));
