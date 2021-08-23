@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 
 using UnityEngine;
-
-using scp035.API;
 
 using Random = UnityEngine.Random;
 
@@ -103,8 +102,9 @@ namespace Stalky106
 				return false;
 			}
 		}
+
 		// Wrapper for SCP-035
-		int? Scp035Id => Scp035Data.GetScp035()?.Id;
+		IEnumerable<Player> Scps035 => Scp035.API.AllScp035;
 		public IEnumerator<float> StalkCoroutine(Player player)
 		{
 			List<Player> list = new List<Player>();
@@ -116,10 +116,11 @@ namespace Stalky106
 
 			foreach (Player plausibleTarget in Player.List)
 			{
-
-				try {
-					if (plausibleTarget.Id == Scp035Id) continue;
-				} catch { }
+				try
+				{
+					if (Scps035.Contains(plausibleTarget)) continue;
+				}
+				catch { }
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreRoles.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreTeams.Contains(plausibleTarget.Team))
@@ -225,7 +226,7 @@ namespace Stalky106
 				// do the SCP-106 portal animation.
 				do
 				{
-					script.CmdUsePortal(); // "Tells" the player he's teleporting
+					script.UserCode_CmdUsePortal(); // "Tells" the player he's teleporting
 					yield return MEC.Timing.WaitForOneFrame; // Wait for one frame to tell him again
 				}
 				while (!script.goingViaThePortal // Stops teleporting the player if SCP-106 is already going through the portal
