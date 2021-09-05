@@ -12,6 +12,7 @@ namespace Stalky106
 		{
 			{ RoleType.Scp173, "<color=#F00>SCP-173</color>" },
 			{ RoleType.ClassD, "<color=#FF8E00>Class D</color>" },
+			{ RoleType.Scientist, "<color=#FFFF7E>Scientist</color>" },
 			{ RoleType.Spectator, "Spectator" },
 			{ RoleType.Scp106, "<color=#F00>SCP-106</color>" },
 			{ RoleType.NtfSpecialist, "<color=#0096FF>NTF Specialist</color>" },
