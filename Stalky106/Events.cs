@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
-
 using NorthwoodLib.Pools;
+
 namespace Stalky106
 {
 	internal class EventHandlers
