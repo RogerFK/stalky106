@@ -2,18 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Exiled.API.Extensions;
 using Exiled.API.Features;
-
+using MEC;
 using UnityEngine;
-
 using Random = UnityEngine.Random;
 
 namespace Stalky106
 {
-	public class StalkyMethods
+	public class Methods
 	{
+		private readonly StalkyPlugin plugin;
+		public Methods(StalkyPlugin plugin)
+		{
+			this.plugin = plugin;
+		}
+
 		// Times
 		public float disableFor;
 		public float stalky106LastTime;
@@ -26,45 +30,45 @@ namespace Stalky106
 				stalkyAvailable = Time.time + value;
 				if (plugin.Config.Preferences.AnnounceReady)
 				{
-					plugin.AddCoroutine(MEC.Timing.CallDelayed(value, () => plugin.NewCoroutine(AnnounceGlobalCooldown())));
+					plugin.Coroutines.Add(Timing.CallDelayed(value, () => plugin.Coroutines.Add(Timing.RunCoroutine(AnnounceGlobalCooldown()))));
 				}
 			}
+
 			get => stalkyAvailable - Time.time;
 		}
-		IEnumerator<float> AnnounceGlobalCooldown()
+
+		public IEnumerator<float> AnnounceGlobalCooldown()
 		{
 			while (stalkyAvailable > Time.time)
 			{
-				yield return MEC.Timing.WaitForSeconds(0.15F);
+				yield return Timing.WaitForSeconds(0.15F);
 			}
-			if (!plugin.Config.IsEnabled || !plugin.Config.Preferences.AnnounceReady) yield break;
 
+			if (!plugin.Config.Preferences.AnnounceReady) yield break;
 			foreach (Player player in Player.List)
 			{
 				if (player.Role == RoleType.Scp106)
 				{
-					player.Broadcast(6, plugin.Config.Translations.StalkReady);
+					player.Broadcast(6, plugin.Translation.StalkReady);
 				}
 			}
 		}
 
 		public readonly string[] defaultRoleNames = new string[]
-		  { "<color=#F00>SCP-173</color>", "<color=#FF8E00>Class D</color>", "Spectator",
+		{ 
+			"<color=#F00>SCP-173</color>", "<color=#FF8E00>Class D</color>", "Spectator",
 			"<color=#F00>SCP-106</color>", "<color=#0096FF>NTF Scientist</color>", "<color=#F00>SCP-049</color>",
 			"<color=#FFFF7CFF>Scientist</color>", "SCP-079", "<color=#008f1e>Chaos Insurgent</color>",
 			"<color=#f00>SCP-096</color>", "<color=#f00>Zombie</color>",
 			"<color=#0096FF>NTF Lieutenant</color>", "<color=#0096FF>NTF Commander</color>",
 			"<color=#0096FF>NTF Cadet</color>",
 			"Tutorial", "<color=#59636f>Facility Guard</color>",
-			"<color=#f00>SCP-939-53</color>", "<color=#f00>SCP-939-89</color>" };
+			"<color=#f00>SCP-939-53</color>", "<color=#f00>SCP-939-89</color>"
+		};
 
 		// It will ALWAYS ignore spectators and unconnected players.
 		private static readonly RoleType[] alwaysIgnore = new RoleType[] { RoleType.None, RoleType.Spectator, RoleType.Scp079 };
-		private readonly StalkyPlugin plugin;
-		public StalkyMethods(StalkyPlugin plugin)
-		{
-			this.plugin = plugin;
-		}
+
 		internal bool Stalk(Player player)
 		{
 			// If Stalky is disabled by force, don't even create a portal for the guy
@@ -82,7 +86,7 @@ namespace Stalky106
 				if (cdAux < 0)
 				{
 					player.ClearBroadcasts();
-					player.Broadcast(6, plugin.Config.Translations.DoubleClick);
+					player.Broadcast(6, plugin.Translation.DoubleClick);
 				}
 				return true;
 			}
@@ -93,12 +97,13 @@ namespace Stalky106
 				{
 					stalky106LastTime = Time.time;
 					int i = 0;
-					for (; i < 5 && cdAux > i; i++) player.Broadcast(1, plugin.Config.Translations.Cooldown_Message.Replace("$time", (cdAux - i).ToString("00")));
+					for (; i < 5 && cdAux > i; i++) player.Broadcast(1, plugin.Translation.Cooldown_Message.Replace("$time", (cdAux - i).ToString("00")));
 					disableFor = Time.time + i + 1;
 					return true;
 				}
+
 				disableFor = Time.time + 4;
-				plugin.NewCoroutine(StalkCoroutine(player));
+				plugin.Coroutines.Add(Timing.RunCoroutine(StalkCoroutine(player)));
 				return false;
 			}
 		}
@@ -141,43 +146,42 @@ namespace Stalky106
 			}
 			if (list.IsEmpty())
 			{
-				player.Broadcast(4, plugin.Config.Translations.NoTargetsLeft);
+				player.Broadcast(4, plugin.Translation.NoTargetsLeft);
 				yield break;
 			}
 
 			// Wait one frame after computing the players
-			yield return MEC.Timing.WaitForOneFrame;
+			yield return Timing.WaitForOneFrame;
 
 			Player target = this.FindTarget(list, scp106Script.teleportPlacementMask, out Vector3 portalPosition);
-
 			if (target == default || (Vector3.Distance(portalPosition, StalkyPlugin.pocketDimension) < 40f))
 			{
-				player.Broadcast(4, plugin.Config.Translations.NoTargetsLeft);
+				player.Broadcast(4, plugin.Translation.NoTargetsLeft);
 				yield break;
 			}
+
 			if (portalPosition.Equals(Vector3.zero))
 			{
-				player.Broadcast(4, plugin.Config.Translations.Error);
+				player.Broadcast(4, plugin.Translation.Error);
 				yield break;
 			}
 
 			// Wait another frame after the while loops that goes over players.
 			// Only useful for +100 player servers and the potatest server in this case, 
 			// but it might help with poorly implemented logging systems. And bruh it's 2 frames.
-			yield return MEC.Timing.WaitForOneFrame;
+			yield return Timing.WaitForOneFrame;
 
-			plugin.NewCoroutine(PortalProcedure(scp106Script, portalPosition - Vector3.up));
-
+			plugin.Coroutines.Add(Timing.RunCoroutine(PortalProcedure(scp106Script, portalPosition - Vector3.up)));
 			StalkyCooldown = plugin.Config.Preferences.Cooldown;
 			stalky106LastTime = Time.time;
 			disableFor = Time.time + 10f;
-			if (!plugin.Config.Translations.RoleDisplayNames.TryGetValue(target.Role, out string className))
+			if (!plugin.Translation.RoleDisplayNames.TryGetValue(target.Role, out string className))
 			{
 				className = defaultRoleNames[(int)target.Role];
 			}
 
 			;
-			player.Broadcast(6, ReplaceAfterToken(plugin.Config.Translations.StalkMessage, '$',
+			player.Broadcast(6, ReplaceAfterToken(plugin.Translation.StalkMessage, '$',
 									new Tuple<string, object>[] {
 										new Tuple<string, object>("player", target.Nickname),
 										new Tuple<string, object>("class", className),

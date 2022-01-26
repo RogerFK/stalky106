@@ -1,62 +1,50 @@
 ﻿using System.Collections.Generic;
-
 using Exiled.API.Features;
-
 using UnityEngine;
-
-using PlyEvents = Exiled.Events.Handlers.Player;
-using SvEvents = Exiled.Events.Handlers.Server;
-using ScpEvents = Exiled.Events.Handlers.Scp106;
+using MEC;
+using System;
+using Handlers = Exiled.Events.Handlers;
 
 namespace Stalky106
 {
-	public class StalkyPlugin : Plugin<PluginConfig>
+	public class StalkyPlugin : Plugin<Config, Translations>
 	{
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "More visually appealing naming style")]
-		public const string VersionStr = "3.2";
-		private readonly List<MEC.CoroutineHandle> coroutines = new List<MEC.CoroutineHandle>();
-		public void AddCoroutine(MEC.CoroutineHandle coroutineHandle) => coroutines.Add(coroutineHandle);
-		public void NewCoroutine(IEnumerator<float> coroutine, MEC.Segment segment = MEC.Segment.Update) => coroutines.Add(MEC.Timing.RunCoroutine(coroutine, segment));
-		public override string Prefix => "ST106";
-		public static readonly Vector3 pocketDimension = new Vector3(0f, -1998f, 0f);
+		public override string Author { get; } = "RogerFK && Raul125";
+		public override string Name { get; } = "Stalky106";
+		public override string Prefix { get; } = "ST106";
+		public override Version RequiredExiledVersion { get; } = new Version(4, 2, 3);
+		public const string VersionStr = "3.3.0";
+		public override Version Version { get; } = new Version(VersionStr);
+                public EventHandlers EventHandlers { get; private set; }
+		public Methods Methods { get; private set; }
 
-		private EventHandlers events;
-		public StalkyMethods Methods { private set; get; }
+		public readonly List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
+		public static readonly Vector3 pocketDimension = new Vector3(0f, -1998f, 0f);
 
 		public override void OnEnabled()
 		{
-			if (!Config.IsEnabled)
-			{
-				Log.Info("Stalky106 is disabled via configs. It will not be loaded.");
-				return;
-			}
-			Log.Info("Prepare to face Larry...");
-			Methods = new StalkyMethods(this);
-			events = new EventHandlers(this);
-			SvEvents.RoundStarted += events.OnRoundStart;
-			PlyEvents.ChangingRole += events.OnSetClass;
-			ScpEvents.CreatingPortal += events.OnCreatePortal;
+			Methods = new Methods(this);
+			EventHandlers = new EventHandlers(this);
+
+			Handlers.Server.RoundStarted += EventHandlers.OnRoundStart;
+			Handlers.Server.RestartingRound += EventHandlers.OnRestartingRound;
+			Handlers.Player.ChangingRole += EventHandlers.OnSetClass;
+			Handlers.Scp106.CreatingPortal += EventHandlers.OnCreatePortal;
+
 			base.OnEnabled();
 		}
 
 		public override void OnDisabled()
 		{
-			if (coroutines != null && coroutines.Count > 0) MEC.Timing.KillCoroutines(coroutines.ToArray());
-			if (events != null)
-			{
-				SvEvents.RoundStarted -= events.OnRoundStart;
-				PlyEvents.ChangingRole -= events.OnSetClass;
-				ScpEvents.CreatingPortal -= events.OnCreatePortal;
-				events = null;
-			}
-			
+			Handlers.Server.RoundStarted -= EventHandlers.OnRoundStart;
+			Handlers.Server.RestartingRound -= EventHandlers.OnRestartingRound;
+			Handlers.Player.ChangingRole -= EventHandlers.OnSetClass;
+			Handlers.Scp106.CreatingPortal -= EventHandlers.OnCreatePortal;
+
+			EventHandlers = null;
 			Methods = null;
 
-			if (Config.IsEnabled)
-			{
-				Log.Info("Larry won't ever stalk you again at night...");
-				base.OnDisabled();
-			}
+			base.OnDisabled();
 		}
 	}
 }
