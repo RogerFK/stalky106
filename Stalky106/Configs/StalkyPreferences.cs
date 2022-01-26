@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace Stalky106
 {
 	[Serializable]
-	public class UserPreferences
+	public class StalkyPreferences
 	{
 		public bool AnnounceReady { get; set; } = true;
 		public float Cooldown { set; get; } = 40f;
