@@ -8,7 +8,6 @@ namespace Stalky106
 	public class EventHandlers
 	{
 		private readonly StalkyPlugin plugin;
-
 		public EventHandlers(StalkyPlugin plugin)
 		{
 			this.plugin = plugin;
@@ -80,7 +79,7 @@ namespace Stalky106
 		}
 
 		public void OnRestartingRound()
-        {
+                {
 			Timing.KillCoroutines(plugin.Coroutines.ToArray());
 			plugin.Coroutines.Clear();
 		}
