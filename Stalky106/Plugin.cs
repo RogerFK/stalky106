@@ -12,10 +12,10 @@ namespace Stalky106
 		public override string Author { get; } = "RogerFK && Raul125";
 		public override string Name { get; } = "Stalky106";
 		public override string Prefix { get; } = "ST106";
-		public override Version RequiredExiledVersion { get; } = new Version(4, 2, 3);
-		public const string VersionStr = "3.3.0";
+		public override Version RequiredExiledVersion { get; } = new Version(5, 0, 0);
+		public const string VersionStr = "3.3.1";
 		public override Version Version { get; } = new Version(VersionStr);
-                public EventHandlers EventHandlers { get; private set; }
+        public EventHandlers EventHandlers { get; private set; }
 		public Methods Methods { get; private set; }
 
 		public readonly List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
@@ -30,7 +30,6 @@ namespace Stalky106
 			Handlers.Server.RestartingRound += EventHandlers.OnRestartingRound;
 			Handlers.Player.ChangingRole += EventHandlers.OnSetClass;
 			Handlers.Scp106.CreatingPortal += EventHandlers.OnCreatePortal;
-
 			base.OnEnabled();
 		}
 
@@ -43,7 +42,6 @@ namespace Stalky106
 
 			EventHandlers = null;
 			Methods = null;
-
 			base.OnDisabled();
 		}
 	}

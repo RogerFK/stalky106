@@ -128,7 +128,7 @@ namespace Stalky106
 				catch { }
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreRoles.Contains(plausibleTarget.Role)
-					&& !plugin.Config.Preferences.IgnoreTeams.Contains(plausibleTarget.Team))
+					&& !plugin.Config.Preferences.IgnoreTeams.Contains(plausibleTarget.Role.Team))
 				{
 					if (plugin.Config.Preferences.SameZoneOnly)
 					{
@@ -177,7 +177,7 @@ namespace Stalky106
 			disableFor = Time.time + 10f;
 			if (!plugin.Translation.RoleDisplayNames.TryGetValue(target.Role, out string className))
 			{
-				className = defaultRoleNames[(int)target.Role];
+				className = defaultRoleNames[(int)target.Role.Type];
 			}
 
 			;
@@ -218,7 +218,7 @@ namespace Stalky106
 			// Checks the config auto_tp to teleport SCP-106
 			if (plugin.Config.Preferences.AutoTp)
 			{
-				yield return MEC.Timing.WaitForSeconds(plugin.Config.Preferences.AutoDelay);
+				yield return Timing.WaitForSeconds(plugin.Config.Preferences.AutoDelay);
 
 				// Do-While prevents you from avoiding the auto-tp by jumping.
 				// Bug: frame-perfect jumps will move SCP-106 on the server, but the client
@@ -231,7 +231,7 @@ namespace Stalky106
 				do
 				{
 					script.UserCode_CmdUsePortal(); // "Tells" the player he's teleporting
-					yield return MEC.Timing.WaitForOneFrame; // Wait for one frame to tell him again
+					yield return Timing.WaitForOneFrame; // Wait for one frame to tell him again
 				}
 				while (!script.goingViaThePortal // Stops teleporting the player if SCP-106 is already going through the portal
 				&& plugin.Config.Preferences.ForceAutoTp); // If force_auto_tp, the do-while will only execute once.
