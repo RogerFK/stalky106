@@ -13,7 +13,7 @@ namespace Stalky106
 		public override string Name { get; } = "Stalky106";
 		public override string Prefix { get; } = "ST106";
 		public override Version RequiredExiledVersion { get; } = new Version(5, 0, 0);
-		public const string VersionStr = "3.3.1";
+		public const string VersionStr = "3.3.2";
 		public override Version Version { get; } = new Version(VersionStr);
         public EventHandlers EventHandlers { get; private set; }
 		public Methods Methods { get; private set; }

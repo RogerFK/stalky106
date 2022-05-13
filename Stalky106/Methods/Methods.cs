@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Exiled.API.Extensions;
+using Exiled.CustomRoles.API;
 using Exiled.API.Features;
 using MEC;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Linq;
+using Exiled.API.Features.Roles;
 
 namespace Stalky106
 {
@@ -108,12 +109,10 @@ namespace Stalky106
 			}
 		}
 
-		// Wrapper for SCP-035
-		IEnumerable<Player> Scps035 => Scp035.API.AllScp035;
 		public IEnumerator<float> StalkCoroutine(Player player)
 		{
 			List<Player> list = new List<Player>();
-			Scp106PlayerScript scp106Script = player.GameObject.GetComponent<Scp106PlayerScript>();
+			Scp106Role scp106Script = player.Role.As<Scp106Role>();
 
 			// We can't (or shouldn't) do it in one iteration, as we "need" to pick a random one.
 			// If we did do it in one iteration, we would have to "go back" at some point,
@@ -123,7 +122,7 @@ namespace Stalky106
 			{
 				try
 				{
-					if (Scps035.Contains(plausibleTarget)) continue;
+					if (plausibleTarget.GetCustomRoles().Any(x => x.Name == "SCP-035")) continue;
 				}
 				catch { }
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
@@ -153,7 +152,7 @@ namespace Stalky106
 			// Wait one frame after computing the players
 			yield return Timing.WaitForOneFrame;
 
-			Player target = this.FindTarget(list, scp106Script.teleportPlacementMask, out Vector3 portalPosition);
+			Player target = this.FindTarget(list, scp106Script.Script.teleportPlacementMask, out Vector3 portalPosition);
 			if (target == default || (Vector3.Distance(portalPosition, StalkyPlugin.pocketDimension) < 40f))
 			{
 				player.Broadcast(4, plugin.Translation.NoTargetsLeft);
@@ -208,12 +207,12 @@ namespace Stalky106
 		}
 
 		// Fully commented to show what it does step by step
-		public IEnumerator<float> PortalProcedure(Scp106PlayerScript script, Vector3 pos)
+		public IEnumerator<float> PortalProcedure(Scp106Role script, Vector3 pos)
 		{
 			// Sets the NetworkportalPosition to pos. Since it's a C# Property,
 			// NetworkPortalPosition is a "set" method and calls some behaviour on its own.
 			// Using provided API functions ensures reliability in future updates.
-			script.NetworkportalPosition = pos;
+			script.PortalPosition = pos;
 
 			// Checks the config auto_tp to teleport SCP-106
 			if (plugin.Config.Preferences.AutoTp)
@@ -230,10 +229,10 @@ namespace Stalky106
 				// do the SCP-106 portal animation.
 				do
 				{
-					script.UserCode_CmdUsePortal(); // "Tells" the player he's teleporting
+					script.UsePortal(); // "Tells" the player he's teleporting
 					yield return Timing.WaitForOneFrame; // Wait for one frame to tell him again
 				}
-				while (!script.goingViaThePortal // Stops teleporting the player if SCP-106 is already going through the portal
+				while (!script.Script.goingViaThePortal // Stops teleporting the player if SCP-106 is already going through the portal
 				&& plugin.Config.Preferences.ForceAutoTp); // If force_auto_tp, the do-while will only execute once.
 			}
 		}
