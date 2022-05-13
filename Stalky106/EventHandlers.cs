@@ -79,7 +79,7 @@ namespace Stalky106
 		}
 
 		public void OnRestartingRound()
-                {
+		{
 			Timing.KillCoroutines(plugin.Coroutines.ToArray());
 			plugin.Coroutines.Clear();
 		}

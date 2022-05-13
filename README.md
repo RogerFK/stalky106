@@ -4,7 +4,7 @@ Ever wondered "how can SCP-106 get closer to its lore?" and wished that they jus
 *Idea by ConnorTheCone and RogerFK*
 
 # Discord
-## Hop on [EXILED](https://github.com/galaxy119/EXILED) 's Discord if you want to get updates for this plugin! https://discord.gg/Avj4jeD
+## Hop on [EXILED](https://github.com/Exiled-Team/EXILED) 's Discord if you want to get updates for this plugin! https://discord.gg/FkFKtkqEps
 
 # How to use it
 
@@ -14,7 +14,7 @@ If you're playing as SCP-106, simply double click in the portal creation tool! I
 
 # Translation info
 
-You can change any line and even use the [UnityEngine's Rich Text Formatting](https://docs.unity3d.com/Manual/StyledText.html). If you want to get the default lines, just delete the values you changed in your `%appdata%\EXILED\Configs\<port>-config.yml` or `~/EXILED/Configs/<port>-config.yml` file.
+You can change any line and even use the [UnityEngine's Rich Text Formatting](https://docs.unity3d.com/Manual/StyledText.html). If you want to get the default lines, just delete the values you changed in your `%appdata%\EXILED\Configs\<port>-translations.yml` or `~/EXILED/Configs/<port>-translations.yml` file.
 
 # Extra info about SCP-106's lore
 
