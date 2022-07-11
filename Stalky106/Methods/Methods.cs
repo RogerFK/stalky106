@@ -120,11 +120,12 @@ namespace Stalky106
 
 			foreach (Player plausibleTarget in Player.List)
 			{
-				try
-				{
-					if ((plausibleTarget.TryGetSessionVariable("IsScp035", out bool isScp035) && isScp035) || (plausibleTarget.TryGetSessionVariable("IsSerpentsHand", out bool isSerpentsHand) && isSerpentsHand)) continue;
-				}
-				catch { }
+				if (
+					(plausibleTarget.TryGetSessionVariable("IsScp035", out bool isScp035) && isScp035) || 
+					(plausibleTarget.TryGetSessionVariable("IsSerpentsHand", out bool isSerpentsHand) && isSerpentsHand)
+					) 
+					continue;
+                
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreRoles.Contains(plausibleTarget.Role)
 					&& !plugin.Config.Preferences.IgnoreTeams.Contains(plausibleTarget.Role.Team))
