@@ -122,7 +122,7 @@ namespace Stalky106
 			{
 				try
 				{
-					if (plausibleTarget.GetCustomRoles().Any(x => x.Name == "SCP-035")) continue;
+					if ((plausibleTarget.TryGetSessionVariable("IsScp035", out bool isScp035) && isScp035) || (plausibleTarget.TryGetSessionVariable("IsSerpentsHand", out bool isSerpentsHand) && isSerpentsHand)) continue;
 				}
 				catch { }
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
