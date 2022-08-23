@@ -1,10 +1,10 @@
-using MEC;
-using Exiled.API.Features;
-using Exiled.Events.EventArgs;
-using NorthwoodLib.Pools;
-
 namespace Stalky106
 {
+	using MEC;
+	using Exiled.API.Features;
+	using Exiled.Events.EventArgs;
+	using NorthwoodLib.Pools;
+
 	public class EventHandlers
 	{
 		private readonly StalkyPlugin plugin;
@@ -13,12 +13,7 @@ namespace Stalky106
 			this.plugin = plugin;
 		}
 
-		public void OnRoundStart()
-		{
-			plugin.Methods.StalkyCooldown = plugin.Config.Preferences.InitialCooldown;
-		}
-
-		public void OnSetClass(ChangingRoleEventArgs ev)
+		public void OnChangingRole(ChangingRoleEventArgs ev)
 		{
 			if (ev.NewRole == RoleType.Scp106)
 			{
@@ -33,7 +28,7 @@ namespace Stalky106
 			}
 		}
 
-		public void OnCreatePortal(CreatingPortalEventArgs ev) 
+		public void OnCreatingPortal(CreatingPortalEventArgs ev) 
 		{
 			var list = ListPool<Player>.Shared.Rent(Player.List);
 			int playerCount = list.Count;
@@ -49,14 +44,11 @@ namespace Stalky106
 			for (int i = 0; i < playerCount; i++) 
 			{
 				var ply = list[i];
-				// if it's a target
 				if (ply.IsAlive) 
 				{
 					aliveCount++;
 					if (!plugin.Config.Preferences.IgnoreRoles.Contains(ply.Role) && !plugin.Config.Preferences.IgnoreTeams.Contains(ply.Role.Team))
-					{
 						targetCount++;
-					}
 				}
 			}
 
@@ -82,6 +74,11 @@ namespace Stalky106
 		{
 			Timing.KillCoroutines(plugin.Coroutines.ToArray());
 			plugin.Coroutines.Clear();
+		}
+
+		public void OnRoundStarted()
+		{
+			plugin.Methods.StalkyCooldown = plugin.Config.Preferences.InitialCooldown;
 		}
 	}
 }

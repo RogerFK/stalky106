@@ -105,11 +105,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventHandlers.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Configs\StalkyPreferences.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="Methods\Methods.cs" />
+    <Compile Include="Methods.cs" />
     <Compile Include="Translations.cs" />
   </ItemGroup>
   <ItemGroup>
