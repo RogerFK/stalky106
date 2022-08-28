@@ -2,7 +2,6 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using Exiled.CustomRoles.API;
 	using Exiled.API.Features;
 	using MEC;
 	using UnityEngine;
@@ -10,8 +9,9 @@
 	using System.Linq;
 	using Exiled.API.Features.Roles;
 	using Extensions;
+    using Exiled.CustomRoles.API;
 
-	public class Methods
+    public class Methods
 	{
 		private readonly StalkyPlugin plugin;
 		public Methods(StalkyPlugin plugin)
@@ -87,11 +87,12 @@
 		private IEnumerator<float> StalkCoroutine(Player player)
 		{
 			List<Player> list = new List<Player>();
-			Scp106Role scp106Script = player.Role.As<Scp106Role>();
+			if (!player.Role.Is(out Scp106Role scp106Script))
+				yield break;
 
 			foreach (Player plausibleTarget in Player.List)
 			{
-				if (plausibleTarget.CustomInfo.Contains("SCP-035") || plausibleTarget.SessionVariables.ContainsKey("IsNPC"))
+				if (plausibleTarget.GetCustomRoles().Any(x => x.Name is "SCP-035") || plausibleTarget.SessionVariables.ContainsKey("IsNPC"))
                     continue;
 
 				if (!alwaysIgnore.Contains(plausibleTarget.Role)
@@ -107,9 +108,7 @@
 						}
 					}
 					else
-					{
 						list.Add(plausibleTarget);
-					}
 				}
 			}
 
@@ -174,7 +173,7 @@
 			{
 				int index = Random.Range(0, validPlayerList.Count);
 				target = validPlayerList[index];
-				Physics.Raycast(new Ray(target.GameObject.transform.position, -Vector3.up), out RaycastHit raycastHit, 10f, teleportPlacementMask);
+				Physics.Raycast(new Ray(target.Position, -Vector3.up), out RaycastHit raycastHit, 10f, teleportPlacementMask);
 				portalPosition = raycastHit.point;
 				validPlayerList.RemoveAt(index);
 			} 
@@ -186,6 +185,9 @@
 		public IEnumerator<float> PortalProcedure(Scp106Role script, Vector3 pos)
 		{
 			script.PortalPosition = pos;
+
+			// Game Base code waits 0.3 seconds to change the portal pos
+			yield return Timing.WaitForSeconds(0.3f);
 
 			if (plugin.Config.Preferences.AutoTp)
 			{

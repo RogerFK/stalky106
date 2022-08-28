@@ -16,7 +16,7 @@
 
 		public override Version RequiredExiledVersion { get; } = new Version(5, 3, 0);
 
-		public const string VersionStr = "3.3.3";
+		public const string VersionStr = "3.3.4";
 
 		public override Version Version { get; } = new Version(VersionStr);
 

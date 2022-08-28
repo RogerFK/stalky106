@@ -17,7 +17,7 @@
 		public float AutoDelay { set; get; } = 0.2f;
 
 		[Description("Forces SCP-106 to be teleported. If he's jumping, it will \"wait\" until he's on the ground to teleport him. Frame-perfect trick allows SCP-106 to move while teleporting, set this to false if players abuse it.")]
-		public bool ForceAutoTp { get; set; }
+		public bool ForceAutoTp { get; set; } = true;
 
 		[Description("ignore_teams and ignore_roles will ignore said teams and roles when searching for a player to stalk")]
 		public Team[] IgnoreTeams { set; get; } = { Team.SCP, Team.CHI, Team.TUT };
